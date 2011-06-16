@@ -1,0 +1,9 @@
+<updates>
+  <new_object object_id="abcdxyz">
+    <property key="x">123</property>
+    <property key="y">456</property>
+  </new_object>
+  <update object_id="abcdxyz">
+    <property key="z">987</property>
+  </update>
+</updates>
