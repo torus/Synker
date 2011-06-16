@@ -26,22 +26,52 @@ get '/pull/:id' => sub {
     Data::Dumper::Dumper ($storage)
 };
 
+sub ignore_white_space {
+    sub {
+	1 if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE
+	      && $_[0]->textContent =~ /[\s\n]*/m);
+    }
+}
+
 sub match_property {
     my $box = shift;
     sub {
 	my $obj = $box->[0];
 	package XML::LibXML::LazyMatcher;
 	print "match_property $obj\n";
+	print $_[0]->toString, "\n";
 
-	C (M (property => sub {
-	    my $key = $_[0]->getAttribute ("key");
-	    my @values = $_[0]->childNodes ();
-
-	    print "\n\n", $obj, $key, @values, "\n";
-
-	    $obj->{$key} = \@values;
-	    1}),
-	   sub {1})->(@_)
+	my $key;
+	C (M (property =>
+	      sub {$key = $_[0]->getAttribute ("key");
+		   print "key = $key\n"; 1},
+	      C (sub {
+		  print "=== nodetype = ", $_[0], $_[0]->nodeType, "\n";
+		  if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE) {
+		      print "===text\n";
+		      $obj->{$key} = $_[0]->textContent ();
+		      1
+		  }
+		 },
+		 M (object_ref =>
+		    sub {
+			my $objid = $_[0]->getAttribute ("object_id");
+			$obj->{$key} = $storage->{$objid};
+			1
+		    }),
+		 M (object_list =>
+		    sub {
+			$obj->{$key} = [];
+			1
+		    },
+		    C (M (object_ref =>
+			  sub {
+			      my $objid = $_[0]->getAttribute ("object_id");
+			      push @{$obj->{$key}}, $storage->{$objid};
+			      1
+			  }))
+		    ))),
+	   synker::ignore_white_space ())->($_[0])
     }
 }
 
@@ -89,7 +119,7 @@ post '/push' => sub {
 			     },
 			     synker::match_property ($box)
 			      )}->(),
-		      sub {1}
+		      synker::ignore_white_space ()
 		   ));
 	my $valid = $m->($doc->documentElement);
 	print "============valid = $valid\n";
