@@ -28,8 +28,8 @@ get '/pull/:id' => sub {
 
 sub ignore_white_space {
     sub {
-	print "ignore\n" and 1 if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE
-				   && $_[0]->textContent =~ /[\s\n]*/m);
+	1 if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE
+	      && $_[0]->textContent =~ /[\s\n]*/m);
     }
 }
 
@@ -38,18 +38,13 @@ sub match_property {
     sub {
 	my $obj = $box->[0];
 	package XML::LibXML::LazyMatcher;
-	print "match_property $obj\n";
-	print $_[0]->toString, "\n";
 
 	my $key;
 	C (M (property =>
-	      sub {$key = $_[0]->getAttribute ("key");
-		   print "key = $key\n"; 1},
+	      sub {$key = $_[0]->getAttribute ("key"); 1},
 	      C (sub {
-		  print "=== nodetype = ", $_[0], $_[0]->nodeType, "\n";
 		  if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE
 		      && $_[0]->textContent !~ /^[\s\n]*$/m) {
-		      print "===text\n";
 		      $obj->{$key} = $_[0]->textContent ();
 		      1
 		  }
@@ -63,7 +58,6 @@ sub match_property {
 		    }),
 		 M (object_list =>
 		    sub {
-			print "object_list $key\n";
 			my $objlist = bless [] => "ObjectList";
 			$obj->{$key} = $objlist;
 			1
@@ -74,8 +68,6 @@ sub match_property {
 			      my $objlist = $obj->{$key};
 			      my $objref = bless {object_id => $objid} => "ObjectRef";
 			      push @$objlist, $objref;
-			      print "array = ", $obj->{$key}, "\n";
-			      print Data::Dumper::Dumper ($obj);
 			      1
 			  }),
 		       synker::ignore_white_space ())
@@ -99,13 +91,11 @@ post '/push' => sub {
 		       my $box = [];
 		       M (update => sub {
 			   my $objid = $_[0]->getAttribute ("object_id");
-			   print "\n=========update $objid\n";
 			   my $obj = $storage->{$objid};
 			   if (!$obj) {
 			       die "object not found."
 			   }
 			   $box->[0] = $obj;
-			   print "obj = $obj\n";
 			   1
 			  },
 			  synker::match_property ($box),
@@ -115,7 +105,6 @@ post '/push' => sub {
 			  M (new_object => sub {
 			      my $objid = $_[0]->getAttribute ("object_id");
 			      my $obj;
-			      print "\n=========new_object $objid\n";
 			      if ($storage->{$objid}) {
 				  die "object " . $objid . " already exists.";
 				  return 0;
@@ -125,7 +114,6 @@ post '/push' => sub {
 				  $storage->{$objid} = $obj;
 			      }
 			      $box->[0] = $obj;
-			      print "obj = $obj\n";
 			      1
 			     },
 			     synker::match_property ($box)
@@ -133,8 +121,8 @@ post '/push' => sub {
 		      synker::ignore_white_space ()
 		   ));
 	my $valid = $m->($doc->documentElement);
-	print "============valid = $valid\n";
 
+	print "============valid = $valid\n";
 	print Data::Dumper::Dumper ($storage);
 
 	"done"
