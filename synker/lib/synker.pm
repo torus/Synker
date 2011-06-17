@@ -29,7 +29,7 @@ get '/pull/:id' => sub {
 sub ignore_white_space {
     sub {
 	print "ignore\n" and 1 if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE
-	      && $_[0]->textContent =~ /[\s\n]*/m);
+				   && $_[0]->textContent =~ /[\s\n]*/m);
     }
 }
 
@@ -47,7 +47,8 @@ sub match_property {
 		   print "key = $key\n"; 1},
 	      C (sub {
 		  print "=== nodetype = ", $_[0], $_[0]->nodeType, "\n";
-		  if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE) {
+		  if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE
+		      && $_[0]->textContent !~ /^[\s\n]*$/m) {
 		      print "===text\n";
 		      $obj->{$key} = $_[0]->textContent ();
 		      1
@@ -62,15 +63,17 @@ sub match_property {
 		    }),
 		 M (object_list =>
 		    sub {
-			print "object_list\n";
-			$obj->{$key} = [];
+			print "object_list $key\n";
+			my $objlist = bless [] => "ObjectList";
+			$obj->{$key} = $objlist;
 			1
 		    },
 		    C (M (object_ref =>
 			  sub {
 			      my $objid = $_[0]->getAttribute ("object_id");
-			      print "list -> object_ref, $objid, $obj->{$key}, $storage->{$objid}\n";
-			      push @{$obj->{$key}}, bless {object_id => $objid} => "ObjectRef";
+			      my $objlist = $obj->{$key};
+			      my $objref = bless {object_id => $objid} => "ObjectRef";
+			      push @$objlist, $objref;
 			      print "array = ", $obj->{$key}, "\n";
 			      print Data::Dumper::Dumper ($obj);
 			      1
