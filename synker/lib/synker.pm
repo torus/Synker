@@ -28,7 +28,7 @@ get '/pull/:id' => sub {
 
 sub ignore_white_space {
     sub {
-	1 if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE
+	print "ignore\n" and 1 if ($_[0]->nodeType == XML::LibXML::XML_TEXT_NODE
 	      && $_[0]->textContent =~ /[\s\n]*/m);
     }
 }
@@ -56,21 +56,28 @@ sub match_property {
 		 M (object_ref =>
 		    sub {
 			my $objid = $_[0]->getAttribute ("object_id");
-			$obj->{$key} = $storage->{$objid};
+			my $objref = {object_id => $objid};
+			$obj->{$key} = bless $objref, "ObjectRef";
 			1
 		    }),
 		 M (object_list =>
 		    sub {
+			print "object_list\n";
 			$obj->{$key} = [];
 			1
 		    },
 		    C (M (object_ref =>
 			  sub {
 			      my $objid = $_[0]->getAttribute ("object_id");
-			      push @{$obj->{$key}}, $storage->{$objid};
+			      print "list -> object_ref, $objid, $obj->{$key}, $storage->{$objid}\n";
+			      push @{$obj->{$key}}, bless {object_id => $objid}, "ObjectRef";
+			      print "array = ", $obj->{$key}, "\n";
+			      print Data::Dumper::Dumper ($obj);
 			      1
-			  }))
-		    ))),
+			  }),
+		       synker::ignore_white_space ())
+		    ),
+		 synker::ignore_white_space ())),
 	   synker::ignore_white_space ())->($_[0])
     }
 }
@@ -111,6 +118,7 @@ post '/push' => sub {
 				  return 0;
 			      } else {
 				  $obj = {}; # new object
+				  bless $obj, "Object";
 				  $storage->{$objid} = $obj;
 			      }
 			      $box->[0] = $obj;
@@ -123,6 +131,9 @@ post '/push' => sub {
 		   ));
 	my $valid = $m->($doc->documentElement);
 	print "============valid = $valid\n";
+
+	print Data::Dumper::Dumper ($storage);
+
 	"done"
     }
 };
