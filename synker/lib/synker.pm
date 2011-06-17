@@ -57,7 +57,7 @@ sub match_property {
 		    sub {
 			my $objid = $_[0]->getAttribute ("object_id");
 			my $objref = {object_id => $objid};
-			$obj->{$key} = bless $objref, "ObjectRef";
+			$obj->{$key} = bless $objref => "ObjectRef";
 			1
 		    }),
 		 M (object_list =>
@@ -70,7 +70,7 @@ sub match_property {
 			  sub {
 			      my $objid = $_[0]->getAttribute ("object_id");
 			      print "list -> object_ref, $objid, $obj->{$key}, $storage->{$objid}\n";
-			      push @{$obj->{$key}}, bless {object_id => $objid}, "ObjectRef";
+			      push @{$obj->{$key}}, bless {object_id => $objid} => "ObjectRef";
 			      print "array = ", $obj->{$key}, "\n";
 			      print Data::Dumper::Dumper ($obj);
 			      1
@@ -118,7 +118,7 @@ post '/push' => sub {
 				  return 0;
 			      } else {
 				  $obj = {}; # new object
-				  bless $obj, "Object";
+				  bless $obj => "Object";
 				  $storage->{$objid} = $obj;
 			      }
 			      $box->[0] = $obj;
