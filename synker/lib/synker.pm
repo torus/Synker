@@ -70,10 +70,10 @@ sub match_property {
 			      push @$objlist, $objref;
 			      1
 			  }),
-		       synker::ignore_white_space ())
+		       synker::ignore_white_space)
 		    ),
-		 synker::ignore_white_space ())),
-	   synker::ignore_white_space ())->($_[0])
+		 synker::ignore_white_space)),
+	   synker::ignore_white_space)->($_[0])
     }
 }
 
@@ -118,7 +118,7 @@ post '/push' => sub {
 			     },
 			     synker::match_property ($box)
 			      )}->(),
-		      synker::ignore_white_space ()
+		      synker::ignore_white_space
 		   ));
 	my $valid = $m->($doc->documentElement);
 
