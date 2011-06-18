@@ -15,6 +15,7 @@ get '/' => sub {
 };
 
 my $storage = {};
+my $count = 0;
 
 get '/pull/:id' => sub {
     package XML::LibXML::LazyBuilder;
@@ -125,7 +126,11 @@ post '/push' => sub {
 	print "============valid = $valid\n";
 	print Data::Dumper::Dumper ($storage);
 
-	"done"
+	my $state_id = $count ++;
+
+	package XML::LibXML::LazyBuilder;
+	DOM (E response => {},
+	     (E new_state => {state_id => $state_id}))->toString;
     }
 };
 
