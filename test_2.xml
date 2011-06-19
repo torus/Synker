@@ -1,0 +1,14 @@
+<updates>
+  <new_object object_id="child1">
+    <property key="n">xyz</property>
+  </new_object>
+  <new_object object_id="qwert">
+    <property key="a"><object_ref object_id="abcdxyz"/></property>
+    <property key="b">
+      <object_list>
+	<object_ref object_id="child1"/>
+	<object_ref object_id="abcdxyz"/>
+      </object_list>
+    </property>
+  </new_object>
+</updates>
