@@ -79,6 +79,15 @@ sub match_property {
     }
 }
 
+sub apply_changes {
+    my ($storage, $changes) = @_;
+
+    for my $i (@$changes) {
+	print Data::Dumper::Dumper ("apply_changes", $i);
+	$i->apply_to ($storage);
+    }
+}
+
 post '/push' => sub {
     my $up = params->{update};
 
@@ -141,7 +150,10 @@ post '/push' => sub {
 	my $state_id = $count ++;
 	push @$history, {state_id => $state_id, changes => \@changes};
 
+	synker::apply_changes ($storage, \@changes);
+
 	print Data::Dumper::Dumper (\@changes);
+	print Data::Dumper::Dumper ($storage);
 
 	package XML::LibXML::LazyBuilder;
 	DOM (E response => {},
@@ -149,4 +161,37 @@ post '/push' => sub {
     }
 };
 
+package NewObject;
+
+sub apply_to {
+    my ($self, $storage) = @_;
+
+    print "NewObject::apply_to: $self->{object_id}, $storage\n";
+
+    if ($storage->{$self->{object_id}}) {
+	die "$self->{object_id}: already exists";
+    } else {
+	my $obj = bless {object_id => $self->{object_id},
+			 properties => $self->{properties}} => "Object";
+	$storage->{$self->{object_id}} = $obj;
+    }
+}
+
+package UpdateObject;
+
+sub apply_to {
+    my ($self, $storage) = @_;
+
+    if (! $storage->{$self->{object_id}}) {
+	die "$self->{object_id}: doesn't exists";
+    } else {
+	my $obj = $storage->{$self->{object_id}};
+	for my $key (keys %{$self->{properties}}) {
+	    $obj->{properties}->{$key} = $self->{properties}->{$key};
+	}
+    }
+}
+
+
+package synker;
 true;
