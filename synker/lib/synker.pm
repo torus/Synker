@@ -83,7 +83,6 @@ sub apply_changes {
     my ($storage, $changes) = @_;
 
     for my $i (@$changes) {
-	print Data::Dumper::Dumper ("apply_changes", $i);
 	$i->apply_to ($storage);
     }
 }
@@ -143,17 +142,12 @@ post '/push' => sub {
 		   ));
 	my $valid = $m->($doc->documentElement);
 
-	print "============valid = $valid\n";
-
 	die "$count  $#$history" if $count != $#$history + 1;
 
 	my $state_id = $count ++;
 	push @$history, {state_id => $state_id, changes => \@changes};
 
 	synker::apply_changes ($storage, \@changes);
-
-	print Data::Dumper::Dumper (\@changes);
-	print Data::Dumper::Dumper ($storage);
 
 	package XML::LibXML::LazyBuilder;
 	DOM (E response => {},
@@ -165,8 +159,6 @@ package NewObject;
 
 sub apply_to {
     my ($self, $storage) = @_;
-
-    print "NewObject::apply_to: $self->{object_id}, $storage\n";
 
     if ($storage->{$self->{object_id}}) {
 	die "$self->{object_id}: already exists";
