@@ -18,7 +18,7 @@ my $storage = {};
 my $count = 0;
 my $history = [];
 
-get '/pull/:id' => sub {
+get '/pull/:id?' => sub {
     package XML::LibXML::LazyBuilder;
 
     # my $dom = DOM (E (state => {}, map {my $e = $_; sub {$e->setOwnerDocument ($_[0]); $e}} @{$storage}));
