@@ -16,6 +16,7 @@ get '/' => sub {
 
 my $storage = {};
 my $count = 0;
+my $history = [];
 
 get '/pull/:id' => sub {
     package XML::LibXML::LazyBuilder;
@@ -37,7 +38,9 @@ sub ignore_white_space {
 sub match_property {
     my $box = shift;
     sub {
-	my $obj = $box->[0];
+	# my $obj = $box->[0];
+	my $obj = $box->[0]->{properties};
+	print Data::Dumper::Dumper (["match_property", $obj]);
 	package XML::LibXML::LazyMatcher;
 
 	my $key;
@@ -87,6 +90,8 @@ post '/push' => sub {
 
 	package XML::LibXML::LazyMatcher;
 
+	my @changes;
+
 	my $m = M (updates =>
 		   C (sub {
 		       my $box = [];
@@ -96,10 +101,17 @@ post '/push' => sub {
 			   if (!$obj) {
 			       die "object not found."
 			   }
-			   $box->[0] = $obj;
+			   # $box->[0] = $obj;
+			   my $pro = bless {} => "Properties";
+			   $box->[0] = bless {object_id => $objid,
+					      properties => $pro} => "UpdateObject";
 			   1
 			  },
 			  synker::match_property ($box),
+			  sub {
+			      push @changes, $box->[0];
+			      1
+			  }
 			   )}->(),
 		      sub {
 			  my $box = [];
@@ -109,24 +121,43 @@ post '/push' => sub {
 			      if ($storage->{$objid}) {
 				  die "object " . $objid . " already exists.";
 				  return 0;
-			      } else {
-				  $obj = {}; # new object
-				  bless $obj => "Object";
-				  $storage->{$objid} = $obj;
+			      # } else {
+			      # 	  $obj = {}; # new object
+			      # 	  bless $obj => "Object";
+			      # 	  $storage->{$objid} = $obj;
 			      }
-			      $box->[0] = $obj;
+			      # $box->[0] = $obj;
+			      my $pro = bless {} => "Properties";
+			      $box->[0] = bless {object_id => $objid,
+						 properties => $pro} => "NewObject";
+
+			      print "new_object 1\n";
 			      1
 			     },
-			     synker::match_property ($box)
+			     sub {
+				 print Data::Dumper::Dumper ($box->[0]->{properties});
+				 print "new_object 2\n";
+				 1
+			     },
+			     synker::match_property ($box),
+			     sub {
+				 push @changes, $box->[0];
+				 print "new_object 3\n";
+				 1
+			     }
 			      )}->(),
 		      synker::ignore_white_space
 		   ));
 	my $valid = $m->($doc->documentElement);
 
 	print "============valid = $valid\n";
-	print Data::Dumper::Dumper ($storage);
+
+	die "$count  $#$history" if $count != $#$history + 1;
 
 	my $state_id = $count ++;
+	push @$history, {state_id => $state_id, changes => \@changes};
+
+	print Data::Dumper::Dumper (\@changes);
 
 	package XML::LibXML::LazyBuilder;
 	DOM (E response => {},
