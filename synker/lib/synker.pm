@@ -38,9 +38,7 @@ sub ignore_white_space {
 sub match_property {
     my $box = shift;
     sub {
-	# my $obj = $box->[0];
 	my $obj = $box->[0]->{properties};
-	print Data::Dumper::Dumper (["match_property", $obj]);
 	package XML::LibXML::LazyMatcher;
 
 	my $key;
@@ -101,7 +99,6 @@ post '/push' => sub {
 			   if (!$obj) {
 			       die "object not found."
 			   }
-			   # $box->[0] = $obj;
 			   my $pro = bless {} => "Properties";
 			   $box->[0] = bless {object_id => $objid,
 					      properties => $pro} => "UpdateObject";
@@ -121,28 +118,15 @@ post '/push' => sub {
 			      if ($storage->{$objid}) {
 				  die "object " . $objid . " already exists.";
 				  return 0;
-			      # } else {
-			      # 	  $obj = {}; # new object
-			      # 	  bless $obj => "Object";
-			      # 	  $storage->{$objid} = $obj;
 			      }
-			      # $box->[0] = $obj;
 			      my $pro = bless {} => "Properties";
 			      $box->[0] = bless {object_id => $objid,
 						 properties => $pro} => "NewObject";
-
-			      print "new_object 1\n";
 			      1
-			     },
-			     sub {
-				 print Data::Dumper::Dumper ($box->[0]->{properties});
-				 print "new_object 2\n";
-				 1
 			     },
 			     synker::match_property ($box),
 			     sub {
 				 push @changes, $box->[0];
-				 print "new_object 3\n";
 				 1
 			     }
 			      )}->(),
