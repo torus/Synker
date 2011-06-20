@@ -55,12 +55,12 @@ sub match_property {
 		    sub {
 			my $objid = $_[0]->getAttribute ("object_id");
 			my $objref = {object_id => $objid};
-			$obj->{$key} = bless $objref => "ObjectRef";
+			$obj->{$key} = bless $objref => "synker::ObjectRef";
 			1
 		    }),
 		 M (object_list =>
 		    sub {
-			my $objlist = bless [] => "ObjectList";
+			my $objlist = bless [] => "synker::ObjectList";
 			$obj->{$key} = $objlist;
 			1
 		    },
@@ -68,7 +68,7 @@ sub match_property {
 			  sub {
 			      my $objid = $_[0]->getAttribute ("object_id");
 			      my $objlist = $obj->{$key};
-			      my $objref = bless {object_id => $objid} => "ObjectRef";
+			      my $objref = bless {object_id => $objid} => "synker::ObjectRef";
 			      push @$objlist, $objref;
 			      1
 			  }),
@@ -107,9 +107,9 @@ post '/push' => sub {
 			   if (!$obj) {
 			       die "object not found."
 			   }
-			   my $pro = bless {} => "Properties";
+			   my $pro = bless {} => "synker::Properties";
 			   $box->[0] = bless {object_id => $objid,
-					      properties => $pro} => "UpdateObject";
+					      properties => $pro} => "synker::UpdateObject";
 			   1
 			  },
 			  synker::match_property ($box),
@@ -127,9 +127,9 @@ post '/push' => sub {
 				  die "object " . $objid . " already exists.";
 				  return 0;
 			      }
-			      my $pro = bless {} => "Properties";
+			      my $pro = bless {} => "synker::Properties";
 			      $box->[0] = bless {object_id => $objid,
-						 properties => $pro} => "NewObject";
+						 properties => $pro} => "synker::NewObject";
 			      1
 			     },
 			     synker::match_property ($box),
@@ -155,7 +155,7 @@ post '/push' => sub {
     }
 };
 
-package NewObject;
+package synker::NewObject;
 
 sub apply_to {
     my ($self, $storage) = @_;
@@ -164,12 +164,12 @@ sub apply_to {
 	die "$self->{object_id}: already exists";
     } else {
 	my $obj = bless {object_id => $self->{object_id},
-			 properties => $self->{properties}} => "Object";
+			 properties => $self->{properties}} => "synker::Object";
 	$storage->{$self->{object_id}} = $obj;
     }
 }
 
-package UpdateObject;
+package synker::UpdateObject;
 
 sub apply_to {
     my ($self, $storage) = @_;
