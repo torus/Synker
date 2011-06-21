@@ -22,16 +22,21 @@ get '/' => sub {
 get '/history/:id?' => sub {
     my $id = params->{id} || 0;
 
-    package XML::LibXML::LazyBuilder;
+    my $dom;
 
-    my @recents = @$history[$id .. $#$history];
-    # print Data::Dumper::Dumper ({recents => \@recents});
+    {
+	package XML::LibXML::LazyBuilder;
 
-    my $dom = DOM (E (history => {},
-		      map {my $e = $_;
-			   $e->toLazyXMLElement
-		      } @recents));
+	my @recents = @$history[$id .. $#$history];
+	# print Data::Dumper::Dumper ({recents => \@recents});
 
+	$dom = DOM (E (history => {},
+		       map {my $e = $_;
+			    $e->toLazyXMLElement
+		       } @recents));
+    }
+
+    header('Content-Type' => 'text/xml');
     $dom->toString;
 };
 
