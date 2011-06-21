@@ -16,6 +16,7 @@ my $history = [];
 
 get '/' => sub {
     # template 'index';
+    header('Content-Type' => 'text/plain');
     Data::Dumper::Dumper ($storage)
 };
 
