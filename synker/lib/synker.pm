@@ -177,7 +177,7 @@ sub apply_to {
 	die "$self->{object_id}: already exists";
     } else {
 	my %prop = %{$self->{properties}};
-	print Data::Dumper::Dumper (\%prop);
+	# print Data::Dumper::Dumper (\%prop);
 	my $obj = bless {object_id => $self->{object_id},
 			 properties => bless \%prop => "synker::Properties"} => "synker::Object";
 	$storage->{$self->{object_id}} = $obj;
