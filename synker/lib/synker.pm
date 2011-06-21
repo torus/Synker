@@ -10,22 +10,29 @@ use Dancer ':syntax';
 
 our $VERSION = '0.1';
 
-get '/' => sub {
-    template 'index';
-};
-
 my $storage = {};
 my $count = 0;
 my $history = [];
 
-get '/pull/:id?' => sub {
+get '/' => sub {
+    # template 'index';
+    Data::Dumper::Dumper ($storage)
+};
+
+get '/history/:id?' => sub {
+    my $id = params->{id} || 0;
+
     package XML::LibXML::LazyBuilder;
 
-    # my $dom = DOM (E (state => {}, map {my $e = $_; sub {$e->setOwnerDocument ($_[0]); $e}} @{$storage}));
+    my @recents = @$history[$id .. $#$history];
+    # print Data::Dumper::Dumper ({recents => \@recents});
 
-    # $dom->toString;
+    my $dom = DOM (E (history => {},
+		      map {my $e = $_;
+			   $e->toLazyXMLElement
+		      } @recents));
 
-    Data::Dumper::Dumper ($storage)
+    $dom->toString;
 };
 
 sub ignore_white_space {
@@ -145,7 +152,7 @@ post '/push' => sub {
 	die "$count  $#$history" if $count != $#$history + 1;
 
 	my $state_id = $count ++;
-	push @$history, {state_id => $state_id, changes => \@changes};
+	push @$history, bless {state_id => $state_id, changes => \@changes} => "synker::Updates";
 
 	synker::apply_changes ($storage, \@changes);
 
@@ -169,6 +176,14 @@ sub apply_to {
     }
 }
 
+sub toLazyXMLElement {
+    my $self = shift;
+
+    package XML::LibXML::LazyBuilder;
+    E (new_object => {object_id => $self->{object_id}},
+       $self->{properties}->toLazyXMLElement)
+}
+
 package synker::UpdateObject;
 
 sub apply_to {
@@ -184,6 +199,78 @@ sub apply_to {
     }
 }
 
+sub toLazyXMLElement {
+    my $self = shift;
+
+    package XML::LibXML::LazyBuilder;
+    E (update => {object_id => $self->{object_id}},
+       $self->{properties}->toLazyXMLElement)
+}
+
+package synker::Object;
+
+sub toLazyXMLElement {
+    my $self = shift;
+
+    package XML::LibXML::LazyBuilder;
+    E (object => {object_id => $self->{object_id}},
+       $self->{properties}->toLazyXMLElement)
+}
+
+package synker::Properties;
+
+sub toLazyXMLElement {
+    my $self = shift;
+
+    package XML::LibXML::LazyBuilder;
+
+    map {
+	my $key = $_;
+	E (property => {key => $key},
+	   sub {
+	       my $val = shift;
+	       ref $val ? $val->toLazyXMLElement : $val;
+	   }->($self->{$key}))
+    } keys %$self;
+}
+
+package synker::ObjectList;
+
+sub toLazyXMLElement {
+    my $self = shift;
+
+    package XML::LibXML::LazyBuilder;
+
+    E (object_list => {},
+       map {
+	   my $val = $_;
+	   ref $val ? $val->toLazyXMLElement : $val;
+       } @$self)
+}
+
+package synker::ObjectRef;
+
+sub toLazyXMLElement {
+    my $self = shift;
+
+    package XML::LibXML::LazyBuilder;
+
+    E (object_ref => {object_id => $self->{object_id}})
+}
+
+package synker::Updates;
+
+sub toLazyXMLElement {
+    my $self = shift;
+
+    package XML::LibXML::LazyBuilder;
+
+    E (change_set => {state_id => $self->{state_id}},
+       map {
+	   my $val = $_;
+	   ref $val ? $val->toLazyXMLElement : $val;
+       } @{$self->{changes}})
+}
 
 package synker;
 true;
