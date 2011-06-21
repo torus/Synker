@@ -113,7 +113,7 @@ post '/push' => sub {
 	my $m = M (updates =>
 		   C (sub {
 		       my $box = [];
-		       M (update => sub {
+		       M (update_object => sub {
 			   my $objid = $_[0]->getAttribute ("object_id");
 			   my $obj = $storage->{$objid};
 			   if (!$obj) {
@@ -175,8 +175,10 @@ sub apply_to {
     if ($storage->{$self->{object_id}}) {
 	die "$self->{object_id}: already exists";
     } else {
+	my %prop = %{$self->{properties}};
+	print Data::Dumper::Dumper (\%prop);
 	my $obj = bless {object_id => $self->{object_id},
-			 properties => $self->{properties}} => "synker::Object";
+			 properties => bless \%prop => "synker::Properties"} => "synker::Object";
 	$storage->{$self->{object_id}} = $obj;
     }
 }
@@ -208,7 +210,7 @@ sub toLazyXMLElement {
     my $self = shift;
 
     package XML::LibXML::LazyBuilder;
-    E (update => {object_id => $self->{object_id}},
+    E (update_object => {object_id => $self->{object_id}},
        $self->{properties}->toLazyXMLElement)
 }
 
@@ -270,7 +272,7 @@ sub toLazyXMLElement {
 
     package XML::LibXML::LazyBuilder;
 
-    E (change_set => {state_id => $self->{state_id}},
+    E (updates => {state_id => $self->{state_id}},
        map {
 	   my $val = $_;
 	   ref $val ? $val->toLazyXMLElement : $val;

@@ -1,5 +1,5 @@
 <updates>
-  <update object_id="abcdxyz">
+  <update_object object_id="abcdxyz">
     <property key="z">987</property>
-  </update>
+  </update_object>
 </updates>
