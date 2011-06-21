@@ -1,5 +1,6 @@
 <updates>
   <update_object object_id="abcdxyz">
+    <property key="x">12345</property>
     <property key="z">987</property>
   </update_object>
 </updates>
