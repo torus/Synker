@@ -22,19 +22,38 @@ get '/' => sub {
 
 get '/history/:id?' => sub {
     my $id = params->{id} || 0;
+    my $current = $#$history;
 
     my $dom;
 
     {
 	package XML::LibXML::LazyBuilder;
 
-	my @recents = @$history[$id .. $#$history];
+	my @recents = @$history[$id .. $current];
 	# print Data::Dumper::Dumper ({recents => \@recents});
 
-	$dom = DOM (E (history => {},
+	$dom = DOM (E (history => {begin_state_id => $id, last_state_id => $current},
 		       map {my $e = $_;
 			    $e->toLazyXMLElement
 		       } @recents));
+    }
+
+    header('Content-Type' => 'text/xml');
+    $dom->toString;
+};
+
+get '/snapshot/' => sub {
+    my $current = $#$history;
+
+    my $dom;
+
+    {
+	package XML::LibXML::LazyBuilder;
+
+	$dom = DOM (E (spanshot => {state_id => $current},
+		       map {my $e = $storage->{$_};
+			    $e->toLazyXMLElement
+		       } keys %$storage));
     }
 
     header('Content-Type' => 'text/xml');
