@@ -151,22 +151,7 @@ post '/push' => sub {
 	my $m = M (updates =>
 		   C (sub {
 		       my $box = [];
-		       M (update_object =>#  sub {
-			  #  my $objid = $_[0]->getAttribute ("object_id");
-			  #  my $obj = $storage->{$objid};
-			  #  if (!$obj) {
-			  #      die "object not found."
-			  #  }
-			  #  my $pro = bless {} => "synker::Properties";
-			  #  $box->[0] = bless {object_id => $objid,
-			  # 		      properties => $pro} => "synker::UpdateObject";
-			  #  1
-			  # },
-			  # synker::match_property ($box),
-			  # sub {
-			  #     push @changes, $box->[0];
-			  #     1
-			  # }
+		       M (update_object =>
 			  synker::handle_update_object ($box),
 			  sub {
 			      push @changes, $box->[0];
