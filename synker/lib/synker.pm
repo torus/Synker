@@ -188,7 +188,6 @@ post '/push' => sub {
 
     if ($up) {
 	my $doc = XML::LibXML->load_xml (string => $up);
-
 	my @changes = eval {read_updates ($doc)};
 
 	die "$count  $#$history" if $count != $#$history + 1;
@@ -196,7 +195,7 @@ post '/push' => sub {
 	my $state_id = $count ++;
 	push @$history, bless {state_id => $state_id, changes => \@changes} => "synker::Updates";
 
-	synker::apply_changes ($storage, \@changes);
+	apply_changes ($storage, \@changes);
 
 	package XML::LibXML::LazyBuilder;
 	DOM (E response => {},
