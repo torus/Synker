@@ -176,24 +176,9 @@ post '/push' => sub {
 			   )}->(),
 		      sub {
 			  my $box = [];
-			  M (new_object => # sub {
-			     #  my $objid = $_[0]->getAttribute ("object_id");
-			     #  my $obj;
-			     #  if ($storage->{$objid}) {
-			     # 	  die "object " . $objid . " already exists.";
-			     # 	  return 0;
-			     #  }
-			     #  my $pro = bless {} => "synker::Properties";
-			     #  $box->[0] = bless {object_id => $objid,
-			     # 			 properties => $pro} => "synker::NewObject";
-			     #  1
-			     # },
-			     # synker::match_property ($box)
+			  M (new_object =>
 			     synker::handle_new_object ($box),
-			     sub {
-				 push @changes, $box->[0];
-				 1
-			     }
+			     sub {push @changes, $box->[0]; 1}
 			      )}->(),
 		      synker::ignore_white_space
 		   ));
