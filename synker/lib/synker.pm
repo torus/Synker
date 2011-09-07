@@ -193,7 +193,8 @@ post '/push' => sub {
 	die "$count  $#$history" if $count != $#$history + 1;
 
 	my $state_id = $count ++;
-	push @$history, bless {state_id => $state_id, changes => \@changes} => "synker::Updates";
+	my $updates = bless {state_id => $state_id, changes => \@changes} => "synker::Updates";
+	push @$history, $updates;
 
 	apply_changes ($storage, \@changes);
 
