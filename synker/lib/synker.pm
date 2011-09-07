@@ -156,6 +156,33 @@ sub handle_new_object {
     )
 }
 
+sub read_updates {
+    my $doc = shift;
+
+    package XML::LibXML::LazyMatcher;
+
+    my @changes;
+
+    my $m = M (updates =>
+	       C (sub {
+		   my $box = [];
+		   M (update_object =>
+		      synker::handle_update_object ($box),
+		      sub {push @changes, $box->[0]; 1}
+		       )}->(),
+		  sub {
+		      my $box = [];
+		      M (new_object =>
+			 synker::handle_new_object ($box),
+			 sub {push @changes, $box->[0]; 1}
+			  )}->(),
+		  synker::ignore_white_space
+	       ));
+    my $valid = $m->($doc->documentElement) or die "invalid update";
+
+    @changes
+}
+
 post '/push' => sub {
     my $up = params->{update};
 
@@ -163,26 +190,28 @@ post '/push' => sub {
 	my $doc = XML::LibXML->load_xml (string => $up);
 	# push @{$storage}, $doc->documentElement;
 
-	package XML::LibXML::LazyMatcher;
+	my @changes = eval {read_updates ($doc)};
 
-	my @changes;
+	# package XML::LibXML::LazyMatcher;
 
-	my $m = M (updates =>
-		   C (sub {
-		       my $box = [];
-		       M (update_object =>
-			  synker::handle_update_object ($box),
-			  sub {push @changes, $box->[0]; 1}
-			   )}->(),
-		      sub {
-			  my $box = [];
-			  M (new_object =>
-			     synker::handle_new_object ($box),
-			     sub {push @changes, $box->[0]; 1}
-			      )}->(),
-		      synker::ignore_white_space
-		   ));
-	my $valid = $m->($doc->documentElement);
+	# my @changes;
+
+	# my $m = M (updates =>
+	# 	   C (sub {
+	# 	       my $box = [];
+	# 	       M (update_object =>
+	# 		  synker::handle_update_object ($box),
+	# 		  sub {push @changes, $box->[0]; 1}
+	# 		   )}->(),
+	# 	      sub {
+	# 		  my $box = [];
+	# 		  M (new_object =>
+	# 		     synker::handle_new_object ($box),
+	# 		     sub {push @changes, $box->[0]; 1}
+	# 		      )}->(),
+	# 	      synker::ignore_white_space
+	# 	   ));
+	# my $valid = $m->($doc->documentElement);
 
 	die "$count  $#$history" if $count != $#$history + 1;
 
