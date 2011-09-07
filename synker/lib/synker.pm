@@ -153,11 +153,7 @@ post '/push' => sub {
 		       my $box = [];
 		       M (update_object =>
 			  synker::handle_update_object ($box),
-			  sub {
-			      push @changes, $box->[0];
-			      1
-			  }
-
+			  sub {push @changes, $box->[0]; 1}
 			   )}->(),
 		      sub {
 			  my $box = [];
