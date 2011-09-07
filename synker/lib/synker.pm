@@ -137,6 +137,25 @@ sub handle_update_object {
     )
 }
 
+sub handle_new_object {
+    my $box = shift;
+
+    (sub {
+	my $objid = $_[0]->getAttribute ("object_id");
+	my $obj;
+	if ($storage->{$objid}) {
+	    die "object " . $objid . " already exists.";
+	    return 0;
+	}
+	my $pro = bless {} => "synker::Properties";
+	$box->[0] = bless {object_id => $objid,
+			   properties => $pro} => "synker::NewObject";
+	1
+     },
+     synker::match_property ($box)
+    )
+}
+
 post '/push' => sub {
     my $up = params->{update};
 
@@ -157,19 +176,20 @@ post '/push' => sub {
 			   )}->(),
 		      sub {
 			  my $box = [];
-			  M (new_object => sub {
-			      my $objid = $_[0]->getAttribute ("object_id");
-			      my $obj;
-			      if ($storage->{$objid}) {
-				  die "object " . $objid . " already exists.";
-				  return 0;
-			      }
-			      my $pro = bless {} => "synker::Properties";
-			      $box->[0] = bless {object_id => $objid,
-						 properties => $pro} => "synker::NewObject";
-			      1
-			     },
-			     synker::match_property ($box),
+			  M (new_object => # sub {
+			     #  my $objid = $_[0]->getAttribute ("object_id");
+			     #  my $obj;
+			     #  if ($storage->{$objid}) {
+			     # 	  die "object " . $objid . " already exists.";
+			     # 	  return 0;
+			     #  }
+			     #  my $pro = bless {} => "synker::Properties";
+			     #  $box->[0] = bless {object_id => $objid,
+			     # 			 properties => $pro} => "synker::NewObject";
+			     #  1
+			     # },
+			     # synker::match_property ($box)
+			     synker::handle_new_object ($box),
 			     sub {
 				 push @changes, $box->[0];
 				 1
