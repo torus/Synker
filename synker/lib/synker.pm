@@ -188,30 +188,8 @@ post '/push' => sub {
 
     if ($up) {
 	my $doc = XML::LibXML->load_xml (string => $up);
-	# push @{$storage}, $doc->documentElement;
 
 	my @changes = eval {read_updates ($doc)};
-
-	# package XML::LibXML::LazyMatcher;
-
-	# my @changes;
-
-	# my $m = M (updates =>
-	# 	   C (sub {
-	# 	       my $box = [];
-	# 	       M (update_object =>
-	# 		  synker::handle_update_object ($box),
-	# 		  sub {push @changes, $box->[0]; 1}
-	# 		   )}->(),
-	# 	      sub {
-	# 		  my $box = [];
-	# 		  M (new_object =>
-	# 		     synker::handle_new_object ($box),
-	# 		     sub {push @changes, $box->[0]; 1}
-	# 		      )}->(),
-	# 	      synker::ignore_white_space
-	# 	   ));
-	# my $valid = $m->($doc->documentElement);
 
 	die "$count  $#$history" if $count != $#$history + 1;
 
