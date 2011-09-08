@@ -162,8 +162,10 @@ sub read_updates {
     package XML::LibXML::LazyMatcher;
 
     my @changes;
+    my $state_id;
 
     my $m = M (updates =>
+	       sub {$state_id = $_[0]->getAttribute ("state_id"); 1},
 	       C (sub {
 		   my $box = [];
 		   M (update_object =>
@@ -180,7 +182,13 @@ sub read_updates {
 	       ));
     my $valid = $m->($doc->documentElement) or die "invalid update";
 
-    @changes
+    ($state_id, @changes)
+}
+
+sub record_changes {
+    my $updates = shift;
+
+
 }
 
 post '/push' => sub {
@@ -188,14 +196,15 @@ post '/push' => sub {
 
     if ($up) {
 	my $doc = XML::LibXML->load_xml (string => $up);
-	my @changes = eval {read_updates ($doc)};
+	my ($state_id, @changes) = eval {read_updates ($doc)};
 
 	die "$count  $#$history" if $count != $#$history + 1;
 
-	my $state_id = $count ++;
+	$state_id ||= $count ++;
 	my $updates = bless {state_id => $state_id, changes => \@changes} => "synker::Updates";
 	push @$history, $updates;
 
+	record_changes ($updates);
 	apply_changes ($storage, \@changes);
 
 	package XML::LibXML::LazyBuilder;
