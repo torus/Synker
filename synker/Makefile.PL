@@ -19,6 +19,8 @@ WriteMakefile(
 	'XML::LibXML' => 0,
 	'XML::LibXML::LazyMatcher' => 0,
 	'XML::LibXML::LazyBuilder' => 0,
+	'URI'        => 1.59,
+	'Data::UUID' => 1.217,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'synker-*' },
