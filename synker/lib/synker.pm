@@ -185,10 +185,17 @@ sub read_updates {
     ($state_id, @changes)
 }
 
-sub record_changes {
+sub store_changes {
     my $updates = shift;
 
+    my $serialized = XML::LibXML::LazyBuilder::DOM ($updates->toLazyXMLElement)->toString;
 
+    use Dancer::FileUtils 'open_file';
+    my $out = open_file('>>', "hoge.xml") or die;
+    print $out "\n<!-- @{[scalar localtime]} -->\n";
+    print $out $serialized;
+
+    $out->close;
 }
 
 post '/push' => sub {
@@ -204,7 +211,7 @@ post '/push' => sub {
 	my $updates = bless {state_id => $state_id, changes => \@changes} => "synker::Updates";
 	push @$history, $updates;
 
-	record_changes ($updates);
+	store_changes ($updates);
 	apply_changes ($storage, \@changes);
 
 	package XML::LibXML::LazyBuilder;
