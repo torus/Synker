@@ -100,7 +100,8 @@ sub match_property {
 			  sub {
 			      my $objid = $_[0]->getAttribute ("object_id");
 			      my $objlist = $obj->{$key};
-			      my $objref = bless {object_id => $objid} => "synker::ObjectRef";
+			      my $objref = bless {object_id => $objid} =>
+				  "synker::ObjectRef";
 			      push @$objlist, $objref;
 			      1
 			  }),
@@ -230,7 +231,8 @@ post '/push' => sub {
 	die "$count  $#$history" if $count != $#$history + 1;
 
 	$state_id ||= $count ++;
-	my $updates = bless {state_id => $state_id, changes => \@changes} => "synker::Updates";
+	my $updates = bless {state_id => $state_id,
+			     changes => \@changes} => "synker::Updates";
 	push @$history, $updates;
 
 	store_changes ($updates);
@@ -253,7 +255,8 @@ sub apply_to {
 	my %prop = %{$self->{properties}};
 	# print Data::Dumper::Dumper (\%prop);
 	my $obj = bless {object_id => $self->{object_id},
-			 properties => bless \%prop => "synker::Properties"} => "synker::Object";
+			 properties => bless \%prop
+			     => "synker::Properties"} => "synker::Object";
 	$storage->{$self->{object_id}} = $obj;
     }
 }
