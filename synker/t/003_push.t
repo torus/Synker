@@ -1,4 +1,4 @@
-use Test::More tests => 3;
+use Test::More tests => 4;
 use strict;
 use warnings;
 
@@ -63,3 +63,14 @@ END_OF_XML3
 
 my $res3 = dancer_response POST => '/push', {body => "update=$update_obj_xml"};
 is $res3->{status}, 200, "update object property";
+
+my $delete_obj_xml = uri_escape (<<END_OF_XML4);
+<updates>
+  <delete_object object_id="$objid1"/>
+  <delete_object object_id="$objid2"/>
+  <delete_object object_id="$objid3"/>
+</updates>
+END_OF_XML4
+
+my $res4 = dancer_response POST => '/push', {body => "update=$delete_obj_xml"};
+is $res4->{status}, 200, "update object property";

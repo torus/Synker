@@ -138,6 +138,20 @@ sub handle_update_object {
     )
 }
 
+sub handle_delete_object {
+    my $box = shift;
+
+    sub {
+	my $objid = $_[0]->getAttribute ("object_id");
+	my $obj = $storage->{$objid};
+	if (!$obj) {
+	    die "object not found."
+	}
+	$box->[0] = bless {object_id => $objid} => "synker::DeleteObject";
+	1
+    }
+}
+
 sub handle_new_object {
     my $box = shift;
 
@@ -177,6 +191,12 @@ sub read_updates {
 		      my $box = [];
 		      M (new_object =>
 			 synker::handle_new_object ($box),
+			 sub {push @changes, $box->[0]; 1}
+			  )}->(),
+		  sub {
+		      my $box = [];
+		      M (delete_object =>
+			 synker::handle_delete_object ($box),
 			 sub {push @changes, $box->[0]; 1}
 			  )}->(),
 		  synker::ignore_white_space
@@ -290,6 +310,25 @@ sub toLazyXMLElement {
     package XML::LibXML::LazyBuilder;
     E (update_object => {object_id => $self->{object_id}},
        $self->{properties}->toLazyXMLElement)
+}
+
+package synker::DeleteObject;
+
+sub apply_to {
+    my ($self, $storage) = @_;
+
+    if (! $storage->{$self->{object_id}}) {
+	die "$self->{object_id}: doesn't exists";
+    } else {
+	delete $storage->{$self->{object_id}};
+    }
+}
+
+sub toLazyXMLElement {
+    my $self = shift;
+
+    package XML::LibXML::LazyBuilder;
+    E (delete_object => {object_id => $self->{object_id}})
 }
 
 package synker::Object;
