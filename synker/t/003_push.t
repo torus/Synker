@@ -54,7 +54,7 @@ is $res2->{status}, 200, "push new object refering previous object";
 
 my $update_obj_xml = uri_escape (<<END_OF_XML3);
 <updates>
-  <update_object object_id="abcdxyz">
+  <update_object object_id="$objid1">
     <property key="x">12345</property>
     <property key="z">987</property>
   </update_object>
