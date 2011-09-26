@@ -209,7 +209,8 @@ sub load_changes {
 	    my ($state_id, @changes) = eval {read_updates ($doc)};
 
 	    $count = $state_id + 1;
-	    my $updates = bless {state_id => $state_id, changes => \@changes} => "synker::Updates";
+	    my $updates = bless {state_id => $state_id,
+				 changes => \@changes} => "synker::Updates";
 	    push @$history, $updates;
 
 	    # store_changes ($updates);
