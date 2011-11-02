@@ -207,16 +207,20 @@ sub read_updates {
 }
 
 sub store_changes {
-    my $updates = shift;
+    use synker::Storage::File;
 
-    my $serialized = XML::LibXML::LazyBuilder::DOM ($updates->toLazyXMLElement)->toString;
+    my $st = new synker::Storage::File;
+    $st->store_changes (@_);
+    # my $updates = shift;
 
-    use Dancer::FileUtils 'open_file';
-    my $out = open_file('>>', "hoge.xml") or die;
-    print $out $serialized;
-    print $out "\n<!-- @{[scalar localtime]} -->\n\0"; # \0 for delimiter
+    # my $serialized = XML::LibXML::LazyBuilder::DOM ($updates->toLazyXMLElement)->toString;
 
-    $out->close;
+    # use Dancer::FileUtils 'open_file';
+    # my $out = open_file('>>', "hoge.xml") or die;
+    # print $out $serialized;
+    # print $out "\n<!-- @{[scalar localtime]} -->\n\0"; # \0 for delimiter
+
+    # $out->close;
 }
 
 sub load_changes {
