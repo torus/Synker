@@ -22,6 +22,7 @@ WriteMakefile(
 	'URI'        => 1.59,
 	'Data::UUID' => 1.217,
     },
+    NORECURS            => 0,
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'synker-*' },
 );
