@@ -214,24 +214,10 @@ sub store_changes {
 }
 
 sub load_changes {
-    use Dancer::FileUtils 'open_file';
-    my $out = eval {open_file('<', "hoge.xml")};
+    use synker::Storage::File;
 
-    if (defined $out) {
-	local $/ = "\0";
-	while (my $xml = <$out>) {
-	    my $doc = XML::LibXML->load_xml (string => $xml);
-	    my ($state_id, @changes) = eval {read_updates ($doc)};
-
-	    $count = $state_id + 1;
-	    my $updates = bless {state_id => $state_id,
-				 changes => \@changes} => "synker::Updates";
-	    push @$history, $updates;
-
-	    apply_changes ($storage, \@changes);
-
-	}
-    }
+    my $st = new synker::Storage::File file => "hoge.xml";
+    $st->load_changes ($history, $storage, \$count);
 }
 
 post '/push' => sub {
