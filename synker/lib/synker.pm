@@ -207,6 +207,7 @@ sub read_updates {
 }
 
 sub store_changes {
+    # TODO: Factory
     use synker::Storage::File;
 
     my $st = new synker::Storage::File file => "hoge.xml";
@@ -214,6 +215,7 @@ sub store_changes {
 }
 
 sub load_changes {
+    # TODO: Factory
     use synker::Storage::File;
 
     my $st = new synker::Storage::File file => "hoge.xml";
