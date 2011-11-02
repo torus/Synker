@@ -234,7 +234,6 @@ sub load_changes {
 				 changes => \@changes} => "synker::Updates";
 	    push @$history, $updates;
 
-	    # store_changes ($updates);
 	    apply_changes ($storage, \@changes);
 
 	}
