@@ -1,19 +1,11 @@
 package synker::Storage::File;
+use parent qw (synker::Storage);
 
 sub new {
-    my ($class, %init) = @_;
-    my $obj = {};
-    for my $k (keys %init) {
-        $obj->{$k} = $init{$k};
-    }
-
+    my $obj = synker::Storage::new (@_);
     die unless $obj->{file};
 
-    if (ref $class) {
-        bless $obj => ref $class;
-    } else {
-        bless $obj => $class;
-    }
+    $obj;
 }
 
 sub store_changes {

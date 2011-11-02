@@ -4,10 +4,12 @@ config.yml
 environments/development.yml
 environments/production.yml
 lib/synker.pm
+lib/synker/Storage.pm
 lib/synker/Storage/File.pm
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
+MYMETA.yml
 public/404.html
 public/500.html
 public/css/error.css
