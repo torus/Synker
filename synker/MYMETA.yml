@@ -1,0 +1,31 @@
+---
+abstract: Synchronizer
+author:
+  - 'Toru Hisai <toru@torus.jp>'
+build_requires:
+  ExtUtils::MakeMaker: 0
+configure_requires:
+  ExtUtils::MakeMaker: 0
+distribution_type: module
+dynamic_config: 0
+generated_by: 'ExtUtils::MakeMaker version 6.57_05'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: synker
+no_index:
+  directory:
+    - t
+    - inc
+requires:
+  Dancer: 1.3051
+  Data::UUID: 1.217
+  Plack: 0.9974
+  Test::More: 0
+  URI: 1.59
+  XML::LibXML: 0
+  XML::LibXML::LazyBuilder: 0
+  XML::LibXML::LazyMatcher: 0
+  YAML: 0
+version: 0.1
