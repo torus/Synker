@@ -17,8 +17,7 @@ my $count = 0;
 my $history = [];
 
 sub output_dom {
-    my $dom = shift;
-    Encode::decode("utf-8", $dom->toString);
+    Encode::decode("utf-8", $_[0]->toString);
 }
 
 get '/' => sub {
