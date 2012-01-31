@@ -1,5 +1,7 @@
 package synker;
 
+use Encode;
+
 use XML::LibXML;
 use XML::LibXML::LazyMatcher;
 use XML::LibXML::LazyBuilder;
@@ -13,6 +15,11 @@ our $VERSION = '0.1';
 my $storage = {};
 my $count = 0;
 my $history = [];
+
+sub output_dom {
+    my $dom = shift;
+    Encode::decode("utf-8", $dom->toString);
+}
 
 get '/' => sub {
     # template 'index';
@@ -39,7 +46,7 @@ get '/history/:id?' => sub {
     }
 
     header('Content-Type' => 'text/xml');
-    $dom->toString;
+    &output_dom ($dom);
 };
 
 get '/snapshot/' => sub {
@@ -57,7 +64,7 @@ get '/snapshot/' => sub {
     }
 
     header('Content-Type' => 'text/xml');
-    $dom->toString;
+    &output_dom ($dom);
 };
 
 sub ignore_white_space {
@@ -224,6 +231,7 @@ sub load_changes {
 
 post '/push' => sub {
     my $up = params->{update};
+    debug $up;
 
     if ($up) {
 	my $doc = XML::LibXML->load_xml (string => $up);
@@ -240,8 +248,8 @@ post '/push' => sub {
 	apply_changes ($storage, \@changes);
 
 	package XML::LibXML::LazyBuilder;
-	DOM (E response => {},
-	     (E new_state => {state_id => $state_id}))->toString;
+	&synker::output_dom (DOM (E response => {},
+                            (E new_state => {state_id => $state_id})));
     }
 };
 

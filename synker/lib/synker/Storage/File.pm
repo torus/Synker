@@ -15,6 +15,7 @@ sub store_changes {
 
     use Dancer::FileUtils 'open_file';
     my $out = open_file('>>', $self->{file}) or die;
+    binmode $out, ":raw";
     print $out $serialized;
     print $out "\n<!-- @{[scalar localtime]} -->\n\0"; # \0 for delimiter
 
