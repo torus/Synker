@@ -69,8 +69,8 @@ xmlmatch.children = function () {
 xmlmatch.matcher = function (tagname) {
     var procs = arguments;
     return function (e) {
-        if (e.tagName.toLowerCase () != tagname) {
-            // console.debug (e.tagName.toLowerCase (), "!=", tagname);
+        if (e.nodeName.toLowerCase () != tagname) {
+            // console.debug (e.nodeName.toLowerCase (), "!=", tagname);
 
             return false;
         }
