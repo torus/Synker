@@ -47,6 +47,7 @@ $(document).ready(function() {
 })
 
 Tasks.prototype.match_snapshot_xml = function (data) {
+    var objects = []
     with (xmlmatch) {
         var mat =
             M("snapshot",
@@ -65,12 +66,26 @@ Tasks.prototype.match_snapshot_xml = function (data) {
                                return true
                            },
                            C((function () {
+                               var key
                                return M("property",
                                         function (e) {
-                                            var key = e.getAttribute("key")
+                                            key = e.getAttribute("key")
                                             console.debug("key", key)
                                             return true
-                                        })})()))})()))
+                                        },
+                                        C(M("object_list"),
+                                          M("#text",
+                                            function (e) {
+                                                var t = e.textContent
+                                                console.debug("#text", t)
+                                                obj.prop[key] = t
+                                                return true
+                                            })))})()),
+                           function (e) {
+                               objects.push(obj)
+                               return true
+                           })})()))
+        this.objects = objects
         var res = mat(data.firstChild)
         console.debug("res", res)
     }
