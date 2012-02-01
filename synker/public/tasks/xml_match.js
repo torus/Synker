@@ -75,7 +75,7 @@ xmlmatch.matcher = function (tagname) {
             return false;
         }
 
-        console.debug ("eating " + tagname);
+        // console.debug ("eating " + tagname);
 
         for (var i = 1; i < procs.length; i ++) {
             var p = procs[i];
