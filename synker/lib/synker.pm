@@ -56,7 +56,7 @@ get '/snapshot/' => sub {
     {
 	package XML::LibXML::LazyBuilder;
 
-	$dom = DOM (E (spanshot => {state_id => $current},
+	$dom = DOM (E (snapshot => {state_id => $current},
 		       map {my $e = $storage->{$_};
 			    $e->toLazyXMLElement
 		       } keys %$storage));
