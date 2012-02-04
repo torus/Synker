@@ -63,8 +63,9 @@ Tasks.prototype.parse_object_list = function (list) {
     }
 }
 
-Tasks.prototype.parse_property = function (obj, key) {
+Tasks.prototype.parse_property = function (obj_box) {
     var self = this
+    var key
 
     with (xmlmatch) {
         return M("property",
@@ -80,14 +81,37 @@ Tasks.prototype.parse_property = function (obj, key) {
                      function (e) {
                          var t = e.textContent
                          console.debug("#text", t)
+                         var obj = obj_box[0]
                          obj.prop[key] = t
                          return true
                      })))
     }
 }
 
+Tasks.prototype.match_object = function () {
+    var obj_box = []
+    var self = this
+
+    with (xmlmatch) {
+        return ["object",
+                function (e) {
+                    var objid = e.getAttribute("object_id")
+                    obj = {prop: {}}
+                    obj.id = objid
+                    obj_box[0] = obj
+                    console.debug("object_id", objid)
+                    return true
+                },
+                C(self.parse_property(obj_box)),
+                function () {
+                    self.objects[obj.id] = obj
+                    return true
+                }]
+    }
+}
+
 Tasks.prototype.match_snapshot_xml = function (data) {
-    var objects = {}
+    this.objects = {}
 
     var self = this
 
@@ -100,22 +124,7 @@ Tasks.prototype.match_snapshot_xml = function (data) {
                   return true
               },
               C((function () {
-                  var obj = {prop: {}}
-                  return M("object",
-                           function (e) {
-                               var objid = e.getAttribute("object_id")
-                               obj.id = objid
-                               console.debug("object_id", objid)
-                               return true
-                           },
-                           C((function () {
-                               var key
-                               return self.parse_property(obj, key)})()),
-                           function () {
-                               objects[obj.id] = obj
-                               return true
-                           })})()))
-        this.objects = objects
+                  return M.apply(this, self.match_object())})()))
         var res = mat(data.firstChild)
         console.debug("res", res)
     }
