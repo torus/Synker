@@ -118,6 +118,23 @@ Tasks.prototype.match_snapshot_xml = function (data) {
         var res = mat(data.firstChild)
         console.debug("res", res)
     }
+
+    var tasks = this.get_tasks()
+    console.debug("Tasks", tasks)
+}
+
+Tasks.prototype.get_tasks = function () {
+    if (this.objects && this.objects.task_list.prop.tasks) {
+        var list = []
+        var ids = this.objects.task_list.prop.tasks
+        for (var i = 0; i < ids.length; i ++) {
+            var id = ids[i]
+            list.push(this.objects[id])
+        }
+        return list
+    } else {
+        return []
+    }
 }
 
 Tasks.prototype.send_message =  function (mesg) {
