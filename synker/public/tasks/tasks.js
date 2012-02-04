@@ -2,7 +2,6 @@ Tasks = function() {
 }
 
 $(document).ready(function() {
-    console.debug("hoge!")
     var body = $("body")
     var ul = $("<ul>")
     body.append(ul)
@@ -41,13 +40,11 @@ Tasks.prototype.parse_object_list = function (obj_box, key_box) {
                  C(M("object_ref",
                      function (e) {
                          var id = e.getAttribute("object_id")
-                         console.debug("object_ref", id)
                          list.push(id)
                          return true
                      })),
                  function (e) {
                      obj_box[0].prop[key_box[0]] = list
-                     console.debug("list", list)
                      return true
                  })
     }
@@ -61,7 +58,6 @@ Tasks.prototype.parse_property = function (obj_box) {
         return M("property",
                  function (e) {
                      key_box[0] = e.getAttribute("key")
-                     console.debug("key", key_box[0])
                      return true
                  },
                  C((function () {
@@ -69,7 +65,6 @@ Tasks.prototype.parse_property = function (obj_box) {
                    M("#text",
                      function (e) {
                          var t = e.textContent
-                         console.debug("#text", t)
                          var obj = obj_box[0]
                          obj.prop[key_box[0]] = t
                          return true
@@ -88,7 +83,6 @@ Tasks.prototype.match_object = function () {
                     var obj = {prop: {}}
                     obj.id = objid
                     obj_box[0] = obj
-                    console.debug("object_id", objid)
                     return true
                 },
                 C(self.parse_property(obj_box)),
