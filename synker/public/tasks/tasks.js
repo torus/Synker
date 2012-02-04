@@ -16,7 +16,11 @@ $(document).ready(function() {
         var mesg = ta.val()
         ta.val("")
         console.debug("submit", mesg, ev)
-        tasks.send_message(mesg)
+        try {
+            tasks.send_message(mesg)
+        } catch (e) {
+            console.debug("error", e)
+        }
         return false
     })
 
@@ -46,43 +50,44 @@ $(document).ready(function() {
     // xmlmatch_test_main ()
 })
 
-Tasks.prototype.parse_object_list = function (list) {
+Tasks.prototype.parse_object_list = function (obj_box, key_box) {
+    var list = []
     with (xmlmatch) {
         return M("object_list",
                  C(M("object_ref",
                      function (e) {
                          var id = e.getAttribute("object_id")
+                         console.debug("object_ref", id)
                          list.push(id)
                          return true
-                     }),
-                   function () {
-                       obj.prop[key] = list
-                       console.debug("list", list)
-                       return true
-                   }))
+                     })),
+                 function (e) {
+                     obj_box[0].prop[key_box[0]] = list
+                     console.debug("list", list)
+                     return true
+                 })
     }
 }
 
 Tasks.prototype.parse_property = function (obj_box) {
     var self = this
-    var key
+    var key_box = []
 
     with (xmlmatch) {
         return M("property",
                  function (e) {
-                     key = e.getAttribute("key")
-                     console.debug("key", key)
+                     key_box[0] = e.getAttribute("key")
+                     console.debug("key", key_box[0])
                      return true
                  },
                  C((function () {
-                     var list = []
-                     return self.parse_object_list(list)})(),
+                     return self.parse_object_list(obj_box, key_box)})(),
                    M("#text",
                      function (e) {
                          var t = e.textContent
                          console.debug("#text", t)
                          var obj = obj_box[0]
-                         obj.prop[key] = t
+                         obj.prop[key_box[0]] = t
                          return true
                      })))
     }
@@ -132,15 +137,46 @@ Tasks.prototype.match_snapshot_xml = function (data) {
 }
 
 Tasks.prototype.send_message =  function (mesg) {
-    var new_obj_elem = E_("new_object", {object_id: Date.now() + "." +
-                                         Math.floor(Math.random() * 10000000)},
+    var objid = Date.now() + "." + Math.floor(Math.random() * 10000000)
+    var new_obj_elem = E_("new_object", {object_id: objid},
                           E_("property", {key: "title"}, mesg),
                           E_("property", {key: "state"}, "todo"),
                           E_("property", {key: "created"}, Date.now()),
                           E_("property", {key: "modified"}, Date.now()))
+    var add_to_list_elem
+    if (this.objects.task_list) {
+        var task_list = this.objects.task_list.prop.tasks
+        task_list.push(objid)
+        console.debug("task added", task_list)
+        add_to_list_elem = E_("update_object", {object_id: "task_list"},
+                              E_("property", {key: "tasks"},
+                                 E_("object_list", {},
+                                    (function () {
+                                        var elems = []
+                                        for (var i = 0; i < task_list.length; i ++) {
+                                            elems.push(E_("object_ref",
+                                                          {object_id: task_list[i]}))
+                                        }
+                                        return elems
+                                    })())))
+    } else {
+        var task_list = [objid]
+        add_to_list_elem = E_("new_object", {object_id: "task_list"},
+                              E_("property", {key: "tasks"},
+                                 E_("object_list", {},
+                                    (function () {
+                                        var elems = []
+                                        for (var i = 0; i < task_list.length; i ++) {
+                                            elems.push(E_("object_ref",
+                                                          {object_id: task_list[i]}))
+                                        }
+                                        return elems
+                                    })())))
+    }
     var e = E_("x", {},
                E_("updates", {},
-                  new_obj_elem
+                  new_obj_elem,
+                  add_to_list_elem
                   ))
     var elem = e(document)
     var xml = elem.innerHTML
