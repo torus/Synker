@@ -96,7 +96,7 @@ Tasks.prototype.match_object = function () {
         return ["object",
                 function (e) {
                     var objid = e.getAttribute("object_id")
-                    obj = {prop: {}}
+                    var obj = {prop: {}}
                     obj.id = objid
                     obj_box[0] = obj
                     console.debug("object_id", objid)
@@ -104,6 +104,7 @@ Tasks.prototype.match_object = function () {
                 },
                 C(self.parse_property(obj_box)),
                 function () {
+                    var obj = obj_box[0]
                     self.objects[obj.id] = obj
                     return true
                 }]
