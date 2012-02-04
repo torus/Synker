@@ -7,6 +7,8 @@ $(document).ready(function() {
     var ul = $("<ul>")
     body.append(ul)
 
+    var tasks = new Tasks
+
     var ta = $("<textarea>")
     var form = $("<form>").append(ta).append($("<input type='submit'>"))
     body.append(form)
@@ -14,11 +16,9 @@ $(document).ready(function() {
         var mesg = ta.val()
         ta.val("")
         console.debug("submit", mesg, ev)
-        send_message(mesg)
+        tasks.send_message(mesg)
         return false
     })
-
-    var tasks = new Tasks
 
     $.ajax({url: "/snapshot/",
             success: function(data, text_status, jqXHR) {
@@ -47,7 +47,8 @@ $(document).ready(function() {
 })
 
 Tasks.prototype.match_snapshot_xml = function (data) {
-    var objects = []
+    var objects = {}
+
     with (xmlmatch) {
         var mat =
             M("snapshot",
@@ -73,7 +74,20 @@ Tasks.prototype.match_snapshot_xml = function (data) {
                                             console.debug("key", key)
                                             return true
                                         },
-                                        C(M("object_list"),
+                                        C((function () {
+                                            var list = []
+                                            return M("object_list",
+                                                     C(M("object_ref",
+                                                         function (e) {
+                                                             var id = e.getAttribute("object_id")
+                                                             list.push(id)
+                                                             return true
+                                                         }),
+                                                       function () {
+                                                           obj.prop[key] = list
+                                                           console.debug("list", list)
+                                                           return true
+                                                       }))})(),
                                           M("#text",
                                             function (e) {
                                                 var t = e.textContent
@@ -81,8 +95,8 @@ Tasks.prototype.match_snapshot_xml = function (data) {
                                                 obj.prop[key] = t
                                                 return true
                                             })))})()),
-                           function (e) {
-                               objects.push(obj)
+                           function () {
+                               objects[obj.id] = obj
                                return true
                            })})()))
         this.objects = objects
@@ -91,15 +105,17 @@ Tasks.prototype.match_snapshot_xml = function (data) {
     }
 }
 
-function send_message(mesg) {
+Tasks.prototype.send_message =  function (mesg) {
+    var new_obj_elem = E_("new_object", {object_id: Date.now() + "." +
+                                         Math.floor(Math.random() * 10000000)},
+                          E_("property", {key: "title"}, mesg),
+                          E_("property", {key: "state"}, "todo"),
+                          E_("property", {key: "created"}, Date.now()),
+                          E_("property", {key: "modified"}, Date.now()))
     var e = E_("x", {},
                E_("updates", {},
-                  E_("new_object", {object_id: Date.now() + "." +
-                                    Math.floor(Math.random() * 10000000)},
-                     E_("property", {key: "title"}, mesg),
-                     E_("property", {key: "state"}, "todo"),
-                     E_("property", {key: "created"}, Date.now()),
-                     E_("property", {key: "modified"}, Date.now()))))
+                  new_obj_elem
+                  ))
     var elem = e(document)
     var xml = elem.innerHTML
 
