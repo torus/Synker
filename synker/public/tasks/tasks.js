@@ -28,26 +28,10 @@ $(document).ready(function() {
             success: function(data, text_status, jqXHR) {
                 console.debug(data, text_status, jqXHR)
 
-                // var root = data.firstChild
-                // var state_id = root.getAttribute("state_id")
-                // for (var child = root.firstChild; child; child = child.nextSibling) {
-                //     var obj = {}
-                //     for (var elem = child.firstChild; elem; elem = elem.nextSibling) {
-                //         var key = elem.getAttribute("key")
-                //         var val = elem.textContent
-                //         console.debug(key, val)
-                //         obj[key] = val
-                //     }
-                //     ul.append($("<li>").text("node " + obj.state + " = " + obj.title))
-                //     objs[child.getAttribute("object_id")] = obj
-                // }
-
                 tasks.match_snapshot_xml(data)
 
                 console.debug(tasks)
             }})
-
-    // xmlmatch_test_main ()
 })
 
 Tasks.prototype.parse_object_list = function (obj_box, key_box) {
