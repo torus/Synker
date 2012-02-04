@@ -3,8 +3,6 @@ Tasks = function() {
 
 $(document).ready(function() {
     var body = $("body")
-    var ul = $("<ul>")
-    body.append(ul)
 
     var tasks = new Tasks
 
@@ -115,6 +113,24 @@ Tasks.prototype.match_snapshot_xml = function (data) {
 
     var tasks = this.get_tasks()
     console.debug("Tasks", tasks)
+
+    var container = $("<div id='container' class='row'>")
+    var body = $("body")
+    body.append(container)
+
+    for (var i = 0; i < tasks.length; i ++) {
+        var o = tasks[i].prop
+        var item = $("<div class='span12'>").
+            append($("<div class='span8'>").
+                   text(o.title)).
+            append($("<div class='span1'>").
+                   append($("<input class='btn-success' type='submit' value='done'>"))).
+            append($("<div class='span4'>").
+                   text(new Date(parseInt(o.created)).toString())).
+            append($("<div class='span4'>").
+                   text(new Date(parseInt(o.modified)).toString()))
+        container.append(item)
+    }
 }
 
 Tasks.prototype.get_tasks = function () {
