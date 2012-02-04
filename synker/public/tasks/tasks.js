@@ -114,7 +114,7 @@ Tasks.prototype.match_snapshot_xml = function (data) {
     var tasks = this.get_tasks()
     console.debug("Tasks", tasks)
 
-    var container = $("<div id='container' class='row'>")
+    var container = $("<div class='row'>")
     var body = $("body")
     body.append(container)
 
