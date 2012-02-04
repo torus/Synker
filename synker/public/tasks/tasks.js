@@ -46,8 +46,50 @@ $(document).ready(function() {
     // xmlmatch_test_main ()
 })
 
+Tasks.prototype.parse_object_list = function (list) {
+    with (xmlmatch) {
+        return M("object_list",
+                 C(M("object_ref",
+                     function (e) {
+                         var id = e.getAttribute("object_id")
+                         list.push(id)
+                         return true
+                     }),
+                   function () {
+                       obj.prop[key] = list
+                       console.debug("list", list)
+                       return true
+                   }))
+    }
+}
+
+Tasks.prototype.parse_property = function (obj, key) {
+    var self = this
+
+    with (xmlmatch) {
+        return M("property",
+                 function (e) {
+                     key = e.getAttribute("key")
+                     console.debug("key", key)
+                     return true
+                 },
+                 C((function () {
+                     var list = []
+                     return self.parse_object_list(list)})(),
+                   M("#text",
+                     function (e) {
+                         var t = e.textContent
+                         console.debug("#text", t)
+                         obj.prop[key] = t
+                         return true
+                     })))
+    }
+}
+
 Tasks.prototype.match_snapshot_xml = function (data) {
     var objects = {}
+
+    var self = this
 
     with (xmlmatch) {
         var mat =
@@ -68,33 +110,7 @@ Tasks.prototype.match_snapshot_xml = function (data) {
                            },
                            C((function () {
                                var key
-                               return M("property",
-                                        function (e) {
-                                            key = e.getAttribute("key")
-                                            console.debug("key", key)
-                                            return true
-                                        },
-                                        C((function () {
-                                            var list = []
-                                            return M("object_list",
-                                                     C(M("object_ref",
-                                                         function (e) {
-                                                             var id = e.getAttribute("object_id")
-                                                             list.push(id)
-                                                             return true
-                                                         }),
-                                                       function () {
-                                                           obj.prop[key] = list
-                                                           console.debug("list", list)
-                                                           return true
-                                                       }))})(),
-                                          M("#text",
-                                            function (e) {
-                                                var t = e.textContent
-                                                console.debug("#text", t)
-                                                obj.prop[key] = t
-                                                return true
-                                            })))})()),
+                               return self.parse_property(obj, key)})()),
                            function () {
                                objects[obj.id] = obj
                                return true
