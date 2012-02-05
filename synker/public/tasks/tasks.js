@@ -165,6 +165,12 @@ Tasks.prototype.construct_task_list = function () {
                 self.update_task_state(tasks[i], "done")
                 return false
             }})(i))
+
+        suspend.click((function (i) {
+            return function (ev) {
+                self.update_task_state(tasks[i], "pending")
+                return false
+            }})(i))
     }
 }
 
