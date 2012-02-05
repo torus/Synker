@@ -6,9 +6,30 @@ $(document).ready(function() {
 
     var tasks = new Tasks
 
-    var ta = $("<textarea>")
-    var form = $("<form>").append(ta).append($("<input type='submit'>"))
-    body.append(form)
+    body.append($("<div class='navbar'>").
+                append($("<div class='navbar-inner'>").
+                       append($("<div class='container'>").
+                              append($("<a class='brand'>").text("Tasks")))))
+
+    var ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")
+    var form = $("<form class='well form-search'>").
+        append(ta).
+        append($("<button type='submit' class='btn'>").
+               text("Add Task"))
+
+    body.append($("<div class='row'>").
+                append($("<div class='span12'>").
+                       append(form)))
+
+// <form class="well form-search">
+//         <input type="text" class="input-small" placeholder="Email">
+//         <input type="password" class="input-small" placeholder="Password">
+//         <button type="submit" class="btn">Go</button>
+//       </form>
+
+    // var ta = $("<textarea>")
+    // var form = $("<form>").append(ta).append($("<input type='submit'>"))
+    // body.append(form)
     form.submit(function(ev) {
         var mesg = ta.val()
         ta.val("")
