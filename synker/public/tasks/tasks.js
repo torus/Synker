@@ -148,6 +148,15 @@ Tasks.prototype.draw_item = function (task_obj) {
     return item
 }
 
+Tasks.prototype.bind_state_to_button = function (btn, task_obj, state) {
+    var self = this
+
+    btn.click(function (ev) {
+        self.update_task_state(task_obj, state)
+        return false
+    })
+}
+
 Tasks.prototype.construct_task_list = function () {
     var self = this
 
@@ -166,17 +175,20 @@ Tasks.prototype.construct_task_list = function () {
             append($("<div style='padding-left:3ex'>").append(done).append(suspend))
         container.append(item)
 
-        done.click((function (task_obj) {
-            return function (ev) {
-                self.update_task_state(task_obj, "done")
-                return false
-            }})(tasks[i]))
+        this.bind_state_to_button(done, tasks[i], "done")
+        this.bind_state_to_button(suspend, tasks[i], "pending")
 
-        suspend.click((function (task_obj) {
-            return function (ev) {
-                self.update_task_state(task_obj, "pending")
-                return false
-            }})(tasks[i]))
+        // done.click((function (task_obj) {
+        //     return function (ev) {
+        //         self.update_task_state(task_obj, "done")
+        //         return false
+        //     }})(tasks[i]))
+
+        // suspend.click((function (task_obj) {
+        //     return function (ev) {
+        //         self.update_task_state(task_obj, "pending")
+        //         return false
+        //     }})(tasks[i]))
     }
 }
 
