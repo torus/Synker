@@ -126,6 +126,17 @@ Tasks.prototype.match_snapshot_xml = function (data) {
     }
 }
 
+Tasks.prototype.update_task_state = function (task, state) {
+    console.debug("clicked", state)
+    task.prop.state = state
+    var e = E_("updates", {},
+               E_("update_object", {object_id: task.id},
+                  E_("property", {key: "state"}, state),
+                  E_("property", {key: "modified"}, Date.now())))
+
+    this.send_ajax(e)
+}
+
 Tasks.prototype.construct_task_list = function () {
     var self = this
 
@@ -151,14 +162,15 @@ Tasks.prototype.construct_task_list = function () {
 
         done.click((function (i) {
             return function (ev) {
-                console.debug("done clicked", ev)
-                o.state = "done"
-                var e = E_("updates", {},
-                           E_("update_object", {object_id: tasks[i].id},
-                              E_("property", {key: "state"}, "done"),
-                              E_("property", {key: "modified"}, Date.now())))
+                self.update_task_state(tasks[i], "done")
+                // console.debug("done clicked", ev)
+                // o.state = "done"
+                // var e = E_("updates", {},
+                //            E_("update_object", {object_id: tasks[i].id},
+                //               E_("property", {key: "state"}, "done"),
+                //               E_("property", {key: "modified"}, Date.now())))
 
-                self.send_ajax(e)
+                // self.send_ajax(e)
 
                 return false
             }})(i))
