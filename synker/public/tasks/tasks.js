@@ -124,41 +124,6 @@ Tasks.prototype.match_snapshot_xml = function (data) {
         var res = mat(data.firstChild)
         console.debug("res", res)
     }
-
-    // var tasks = this.get_tasks()
-    // console.debug("Tasks", tasks)
-
-    // var container = $("<div class='row'>")
-    // var body = $("body")
-    // body.append(container)
-
-    // for (var i = 0; i < tasks.length; i ++) {
-    //     var o = tasks[i].prop
-    //     var done = $("<a class='btn btn-success' type='submit' href='#'>").text("Done")
-    //     var suspend = $("<a class='btn btn-warning' type='submit' href='#'>").text("Suspend")
-    //     var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
-    //         append($("<div>").
-    //                append($("<h3>").text(o.title)).
-    //                append($("<p>").
-    //                       append($("<small>").
-    //                              text(new Date(parseInt(o.created)).toString())))).
-    //         append($("<div style='padding-left:3ex'>").append(done).append(suspend))
-    //     container.append(item)
-
-    //     done.click((function (i) {
-    //         return function (ev) {
-    //             console.debug("done clicked", ev)
-    //             o.state = "done"
-    //             var e = E_("updates", {},
-    //                        E_("update_object", {object_id: tasks[i].id},
-    //                           E_("property", {key: "state"}, "done"),
-    //                           E_("property", {key: "modified"}, Date.now())))
-
-    //             self.send_ajax(e)
-
-    //             return false
-    //         }})(i))
-    // }
 }
 
 Tasks.prototype.construct_task_list = function () {
