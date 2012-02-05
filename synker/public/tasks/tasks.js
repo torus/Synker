@@ -3,6 +3,7 @@ Tasks = function() {
 
 $(document).ready(function() {
     var body = $("body")
+    body.css("background-color", "lightgray")
 
     var tasks = new Tasks
 
@@ -132,7 +133,7 @@ Tasks.prototype.match_snapshot_xml = function (data) {
 
     for (var i = 0; i < tasks.length; i ++) {
         var o = tasks[i].prop
-        var item = $("<div class='span3' style='border:solid #eef;margin-top:1ex'>").
+        var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
             append($("<div>").
                    append($("<h3>").text(o.title)).
                    append($("<p>").
