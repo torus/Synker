@@ -169,7 +169,6 @@ Tasks.prototype.construct_task_list = function () {
     body.append(container)
 
     for (var i = 0; i < tasks.length; i ++) {
-        // var o = tasks[i].prop
         var done = $("<a class='btn btn-success' type='submit' href='#'>").text("Done")
         var suspend = $("<a class='btn btn-warning' type='submit' href='#'>").text("Suspend")
         var item = this.draw_item(tasks[i]).
