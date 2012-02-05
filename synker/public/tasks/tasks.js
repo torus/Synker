@@ -166,6 +166,7 @@ Tasks.prototype.construct_task_list = function () {
 
     var container = $("<div class='row'>")
     var body = $("body")
+    body.append($("<h2>").text("TODO"))
     body.append(container)
 
     for (var i = 0; i < tasks.length; i ++) {
