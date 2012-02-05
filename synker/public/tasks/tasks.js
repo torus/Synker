@@ -120,14 +120,15 @@ Tasks.prototype.match_snapshot_xml = function (data) {
 
     for (var i = 0; i < tasks.length; i ++) {
         var o = tasks[i].prop
-        var item = $("<div class='row' style='border:solid #eef;margin-top:1ex'>").
-            append($("<div class='span8'>").
-                   text(o.title)).
-            append($("<div class='span4'>").
+        var item = $("<div class='span3' style='border:solid #eef;margin-top:1ex'>").
+            append($("<div>").
+                   append($("<h3>").text(o.title)).
+                   append($("<p>").
+                          append($("<small>").
+                                 text(new Date(parseInt(o.created)).toString())))).
+            append($("<div class='offset1'>").
                    append($("<input class='btn-success' type='submit' value='done'>")).
-                   append($("<input class='btn' type='submit' value='suspend'>"))).
-            append($("<div class='span4'>").
-                   text(new Date(parseInt(o.created)).toString()))
+                   append($("<input class='btn' type='submit' value='suspend'>")))
         container.append(item)
     }
 }
