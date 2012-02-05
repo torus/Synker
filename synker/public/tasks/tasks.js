@@ -133,6 +133,8 @@ Tasks.prototype.match_snapshot_xml = function (data) {
 
     for (var i = 0; i < tasks.length; i ++) {
         var o = tasks[i].prop
+        var done = $("<button class='btn-success' type='submit'>").text("Done")
+        var suspend = $("<button class='btn-warning' type='submit'>").text("Suspend")
         var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
             append($("<div>").
                    append($("<h3>").text(o.title)).
@@ -140,21 +142,29 @@ Tasks.prototype.match_snapshot_xml = function (data) {
                           append($("<small>").
                                  text(new Date(parseInt(o.created)).toString())))).
             append($("<div class='offset1'>").
-                   append($("<input class='btn-success' type='submit' value='done'>")).
-                   append($("<input class='btn' type='submit' value='suspend'>")))
+                   append(done).
+                   append(suspend))
         container.append(item)
     }
 }
 
 Tasks.prototype.get_tasks = function () {
     if (this.objects && this.objects.task_list.prop.tasks) {
-        var list = []
+        var todo_list = []
+        var pending_list = []
+        var done_list = []
         var ids = this.objects.task_list.prop.tasks
         for (var i = 0; i < ids.length; i ++) {
             var id = ids[i]
-            list.push(this.objects[id])
+            var obj = this.objects[id]
+            if (obj.prop.state == "todo")
+                todo_list.push(obj)
+            else if (obj.prop.state == "pending")
+                pending_list.push(obj)
+            else if (obj.prop.state == "done")
+                done_list.push(obj)
         }
-        return list
+        return todo_list
     } else {
         return []
     }
