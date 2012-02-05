@@ -154,13 +154,6 @@ Tasks.prototype.match_snapshot_xml = function (data) {
                               E_("property", {key: "modified"}, Date.now())))
 
                 self.send_ajax(e)
-                // var elem = E_("x", {}, e)(document)
-                // var xml = elem.innerHTML
-
-                // var data = "update=" + encodeURI(xml)
-                // $.ajax({url: "/push",
-                //         type: "POST",
-                //         data: data})
 
                 return false
             }})(i))
@@ -240,15 +233,6 @@ Tasks.prototype.send_message =  function (mesg) {
                new_obj_elem,
                add_to_list_elem
               )
-    // var elem = e(document)
-    // var xml = elem.innerHTML
-
-    // var data = "update=" + encodeURI(xml)
-    // console.debug(data)
-
-    // $.ajax({url: "/push",
-    //         type: "POST",
-    //         data: data})
 
     this.send_ajax(e)
 }
