@@ -182,6 +182,20 @@ Tasks.prototype.construct_task_list = function () {
         this.bind_state_to_button(suspend, todo_tasks[i], "pending")
     }
 
+    var pending_container = $("<div class='row'>")
+    var pending_tasks = tasks.pending
+    body.append($("<h2>").text("PENDING"))
+    body.append(pending_container)
+
+    for (var i = 0; i < pending_tasks.length; i ++) {
+        var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
+        var item = this.draw_item(pending_tasks[i]).
+            append($("<div style='padding-left:3ex'>").append(resume))
+        pending_container.append(item)
+
+        this.bind_state_to_button(resume, pending_tasks[i], "todo")
+    }
+
     var done_container = $("<div class='row'>")
     var done_tasks = tasks.done
     body.append($("<h2>").text("DONE"))
