@@ -236,18 +236,19 @@ Tasks.prototype.send_message =  function (mesg) {
                                         return elems
                                     })())))
     }
-    var e = E_("x", {},
-               E_("updates", {},
-                  new_obj_elem,
-                  add_to_list_elem
-                  ))
-    var elem = e(document)
-    var xml = elem.innerHTML
+    var e = E_("updates", {},
+               new_obj_elem,
+               add_to_list_elem
+              )
+    // var elem = e(document)
+    // var xml = elem.innerHTML
 
-    var data = "update=" + encodeURI(xml)
-    console.debug(data)
+    // var data = "update=" + encodeURI(xml)
+    // console.debug(data)
 
-    $.ajax({url: "/push",
-            type: "POST",
-            data: data})
+    // $.ajax({url: "/push",
+    //         type: "POST",
+    //         data: data})
+
+    this.send_ajax(e)
 }
