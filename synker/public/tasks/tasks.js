@@ -151,14 +151,16 @@ Tasks.prototype.match_snapshot_xml = function (data) {
                 var e = E_("updates", {},
                            E_("update_object", {object_id: tasks[i].id},
                               E_("property", {key: "state"}, "done"),
-                              E_("property", {key: "modified"}, Date.now()))))
-                var elem = E_("x", {}, e)(document)
-                var xml = elem.innerHTML
+                              E_("property", {key: "modified"}, Date.now())))
 
-                var data = "update=" + encodeURI(xml)
-                $.ajax({url: "/push",
-                        type: "POST",
-                        data: data})
+                self.send_ajax(e)
+                // var elem = E_("x", {}, e)(document)
+                // var xml = elem.innerHTML
+
+                // var data = "update=" + encodeURI(xml)
+                // $.ajax({url: "/push",
+                //         type: "POST",
+                //         data: data})
 
                 return false
             }})(i))
@@ -185,6 +187,16 @@ Tasks.prototype.get_tasks = function () {
     } else {
         return []
     }
+}
+
+Tasks.prototype.send_ajax = function (xmlelem) {
+    var elem = E_("x", {}, xmlelem)(document)
+    var xml = elem.innerHTML
+
+    var data = "update=" + encodeURI(xml)
+    $.ajax({url: "/push",
+            type: "POST",
+            data: data})
 }
 
 Tasks.prototype.send_message =  function (mesg) {
