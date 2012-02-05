@@ -21,15 +21,6 @@ $(document).ready(function() {
                 append($("<div class='span12'>").
                        append(form)))
 
-// <form class="well form-search">
-//         <input type="text" class="input-small" placeholder="Email">
-//         <input type="password" class="input-small" placeholder="Password">
-//         <button type="submit" class="btn">Go</button>
-//       </form>
-
-    // var ta = $("<textarea>")
-    // var form = $("<form>").append(ta).append($("<input type='submit'>"))
-    // body.append(form)
     form.submit(function(ev) {
         var mesg = ta.val()
         ta.val("")
