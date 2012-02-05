@@ -164,28 +164,41 @@ Tasks.prototype.construct_task_list = function () {
     var tasks = this.get_tasks()
     console.debug("Tasks", tasks)
 
-    var container = $("<div class='row'>")
     var body = $("body")
-    body.append($("<h2>").text("TODO"))
-    body.append(container)
 
-    for (var i = 0; i < tasks.length; i ++) {
+    var todo_container = $("<div class='row'>")
+    var todo_tasks = tasks.todo
+    body.append($("<h2>").text("TODO"))
+    body.append(todo_container)
+
+    for (var i = 0; i < todo_tasks.length; i ++) {
         var done = $("<a class='btn btn-success' href='#'>").text("Done")
         var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
-        var item = this.draw_item(tasks[i]).
+        var item = this.draw_item(todo_tasks[i]).
             append($("<div style='padding-left:3ex'>").append(done).append(suspend))
-        container.append(item)
+        todo_container.append(item)
 
-        this.bind_state_to_button(done, tasks[i], "done")
-        this.bind_state_to_button(suspend, tasks[i], "pending")
+        this.bind_state_to_button(done, todo_tasks[i], "done")
+        this.bind_state_to_button(suspend, todo_tasks[i], "pending")
+    }
+
+    var done_container = $("<div class='row'>")
+    var done_tasks = tasks.done
+    body.append($("<h2>").text("DONE"))
+    body.append(done_container)
+
+    for (var i = 0; i < done_tasks.length; i ++) {
+        var item = this.draw_item(done_tasks[i])
+        done_container.append(item)
     }
 }
 
 Tasks.prototype.get_tasks = function () {
+    var todo_list = []
+    var pending_list = []
+    var done_list = []
+
     if (this.objects && this.objects.task_list.prop.tasks) {
-        var todo_list = []
-        var pending_list = []
-        var done_list = []
         var ids = this.objects.task_list.prop.tasks
         for (var i = 0; i < ids.length; i ++) {
             var id = ids[i]
@@ -197,10 +210,9 @@ Tasks.prototype.get_tasks = function () {
             else if (obj.prop.state == "done")
                 done_list.push(obj)
         }
-        return todo_list
-    } else {
-        return []
     }
+
+    return {todo: todo_list, pending: pending_list, done: done_list}
 }
 
 Tasks.prototype.send_ajax = function (xmlelem) {
