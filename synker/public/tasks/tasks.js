@@ -163,15 +163,6 @@ Tasks.prototype.construct_task_list = function () {
         done.click((function (i) {
             return function (ev) {
                 self.update_task_state(tasks[i], "done")
-                // console.debug("done clicked", ev)
-                // o.state = "done"
-                // var e = E_("updates", {},
-                //            E_("update_object", {object_id: tasks[i].id},
-                //               E_("property", {key: "state"}, "done"),
-                //               E_("property", {key: "modified"}, Date.now())))
-
-                // self.send_ajax(e)
-
                 return false
             }})(i))
     }
