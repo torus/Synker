@@ -166,17 +166,17 @@ Tasks.prototype.construct_task_list = function () {
             append($("<div style='padding-left:3ex'>").append(done).append(suspend))
         container.append(item)
 
-        done.click((function (i) {
+        done.click((function (task_obj) {
             return function (ev) {
-                self.update_task_state(tasks[i], "done")
+                self.update_task_state(task_obj, "done")
                 return false
-            }})(i))
+            }})(tasks[i]))
 
-        suspend.click((function (i) {
+        suspend.click((function (task_obj) {
             return function (ev) {
-                self.update_task_state(tasks[i], "pending")
+                self.update_task_state(task_obj, "pending")
                 return false
-            }})(i))
+            }})(tasks[i]))
     }
 }
 
