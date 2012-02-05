@@ -133,18 +133,35 @@ Tasks.prototype.match_snapshot_xml = function (data) {
 
     for (var i = 0; i < tasks.length; i ++) {
         var o = tasks[i].prop
-        var done = $("<button class='btn-success' type='submit'>").text("Done")
-        var suspend = $("<button class='btn-warning' type='submit'>").text("Suspend")
+        var done = $("<a class='btn btn-success' type='submit' href='#'>").text("Done")
+        var suspend = $("<a class='btn btn-warning' type='submit' href='#'>").text("Suspend")
         var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
             append($("<div>").
                    append($("<h3>").text(o.title)).
                    append($("<p>").
                           append($("<small>").
                                  text(new Date(parseInt(o.created)).toString())))).
-            append($("<div class='offset1'>").
-                   append(done).
-                   append(suspend))
+            append($("<div style='padding-left:3ex'>").append(done).append(suspend))
         container.append(item)
+
+        done.click((function (i) {
+            return function (ev) {
+                console.debug("done clicked", ev)
+                o.state = "done"
+                var e = E_("updates", {},
+                           E_("update_object", {object_id: tasks[i].id},
+                              E_("property", {key: "state"}, "done"),
+                              E_("property", {key: "modified"}, Date.now()))))
+                var elem = E_("x", {}, e)(document)
+                var xml = elem.innerHTML
+
+                var data = "update=" + encodeURI(xml)
+                $.ajax({url: "/push",
+                        type: "POST",
+                        data: data})
+
+                return false
+            }})(i))
     }
 }
 
