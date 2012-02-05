@@ -138,12 +138,13 @@ Tasks.prototype.update_task_state = function (task, state) {
 }
 
 Tasks.prototype.draw_item = function (task_obj) {
+    var o = task_obj.prop
     var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
         append($("<div>").
-               append($("<h3>").text(task_obj.title)).
+               append($("<h3>").text(o.title)).
                append($("<p>").
                       append($("<small>").
-                             text(new Date(parseInt(task_obj.created)).toString()))))
+                             text(new Date(parseInt(o.created)).toString()))))
 
     return item
 }
@@ -168,27 +169,15 @@ Tasks.prototype.construct_task_list = function () {
     body.append(container)
 
     for (var i = 0; i < tasks.length; i ++) {
-        var o = tasks[i].prop
+        // var o = tasks[i].prop
         var done = $("<a class='btn btn-success' type='submit' href='#'>").text("Done")
         var suspend = $("<a class='btn btn-warning' type='submit' href='#'>").text("Suspend")
-        var item = this.draw_item(o).
+        var item = this.draw_item(tasks[i]).
             append($("<div style='padding-left:3ex'>").append(done).append(suspend))
         container.append(item)
 
         this.bind_state_to_button(done, tasks[i], "done")
         this.bind_state_to_button(suspend, tasks[i], "pending")
-
-        // done.click((function (task_obj) {
-        //     return function (ev) {
-        //         self.update_task_state(task_obj, "done")
-        //         return false
-        //     }})(tasks[i]))
-
-        // suspend.click((function (task_obj) {
-        //     return function (ev) {
-        //         self.update_task_state(task_obj, "pending")
-        //         return false
-        //     }})(tasks[i]))
     }
 }
 
