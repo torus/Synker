@@ -137,6 +137,19 @@ Tasks.prototype.update_task_state = function (task, state) {
     this.send_ajax(e)
 }
 
+Tasks.prototype.draw_item = function (task_obj) {
+    // var done = $("<a class='btn btn-success' type='submit' href='#'>").text("Done")
+    // var suspend = $("<a class='btn btn-warning' type='submit' href='#'>").text("Suspend")
+    var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
+        append($("<div>").
+               append($("<h3>").text(task_obj.title)).
+               append($("<p>").
+                      append($("<small>").
+                             text(new Date(parseInt(task_obj.created)).toString()))))
+
+    return item
+}
+
 Tasks.prototype.construct_task_list = function () {
     var self = this
 
@@ -151,12 +164,14 @@ Tasks.prototype.construct_task_list = function () {
         var o = tasks[i].prop
         var done = $("<a class='btn btn-success' type='submit' href='#'>").text("Done")
         var suspend = $("<a class='btn btn-warning' type='submit' href='#'>").text("Suspend")
-        var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
-            append($("<div>").
-                   append($("<h3>").text(o.title)).
-                   append($("<p>").
-                          append($("<small>").
-                                 text(new Date(parseInt(o.created)).toString())))).
+        // var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
+        //     append($("<div>").
+        //            append($("<h3>").text(o.title)).
+        //            append($("<p>").
+        //                   append($("<small>").
+        //                          text(new Date(parseInt(o.created)).toString())))).
+        //     append($("<div style='padding-left:3ex'>").append(done).append(suspend))
+        var item = this.draw_item(o).
             append($("<div style='padding-left:3ex'>").append(done).append(suspend))
         container.append(item)
 
