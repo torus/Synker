@@ -203,6 +203,9 @@ Tasks.prototype.construct_task_list = function () {
 
     for (var i = 0; i < done_tasks.length; i ++) {
         var item = this.draw_item(done_tasks[i])
+		item.append($("<p>").
+                    append($("<small>").
+                           text(new Date(parseInt(done_tasks[i].prop.modified)).toString())))
         done_container.append(item)
     }
 }
@@ -224,6 +227,15 @@ Tasks.prototype.get_tasks = function () {
             else if (obj.prop.state == "done")
                 done_list.push(obj)
         }
+
+		done_list.sort (function (a, b) {
+			try {
+				return parseInt(b.prop.modified) - parseInt(a.prop.modified)
+			} catch (e) {
+				console.log("doesn't have modified date", a, b)
+				return 0
+			}
+		})
     }
 
     return {todo: todo_list, pending: pending_list, done: done_list}
