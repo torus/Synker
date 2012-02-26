@@ -21,6 +21,7 @@ no_index:
 requires:
   Dancer: 1.3051
   Data::UUID: 1.217
+  Moose: 2.0402
   Plack: 0.9974
   Test::More: 0
   URI: 1.59
