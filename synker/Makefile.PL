@@ -21,6 +21,7 @@ WriteMakefile(
 	'XML::LibXML::LazyBuilder' => 0,
 	'URI'        => 1.59,
 	'Data::UUID' => 1.217,
+        'Moose'      => 2.0402,
     },
     NORECURS            => 0,
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

@@ -7,27 +7,48 @@ use XML::LibXML::LazyMatcher;
 use XML::LibXML::LazyBuilder;
 
 use Data::Dumper;
-
+use synker::State;
 use Dancer ':syntax';
 
 our $VERSION = '0.1';
 
-my $storage = {};
-my $count = 0;
-my $history = [];
+my $states = {};
+# my $storage = {};
+# my $count = 0;
+# my $history = [];
+
+sub get_state_obj {
+    my ($key) = @_;
+    my $stat = $states->{$key};
+    if (!$stat) {
+        $stat = load_changes ($key);
+        $states->{$key} = $stat;
+    }
+
+    $stat
+}
 
 sub output_dom {
     Encode::decode("utf-8", $_[0]->toString);
 }
 
 get '/' => sub {
-    # template 'index';
+    template 'index';
+};
+
+get '/:key' => sub {
     header('Content-Type' => 'text/plain');
+    my $key = params->{key};
+    my $stat = get_state_obj ($key);
+    my $storage = $stat->{storage};
     Data::Dumper::Dumper ($storage)
 };
 
-get '/history/:id?' => sub {
+get '/history/:key/:id?' => sub {
     my $id = params->{id} || 0;
+    my $key = params->{key};
+    my $stat = get_state_obj ($key);
+    my $history = $stat->{history};
     my $current = $#$history;
 
     my $dom;
@@ -48,7 +69,11 @@ get '/history/:id?' => sub {
     &output_dom ($dom);
 };
 
-get '/snapshot/' => sub {
+get '/snapshot/:key' => sub {
+    my $key = params->{key};
+    my $stat = get_state_obj ($key);
+    my $history = $stat->{history};
+    my $storage = $stat->{storage};
     my $current = $#$history;
 
     my $dom;
@@ -127,7 +152,8 @@ sub apply_changes {
 }
 
 sub handle_update_object {
-    my $box = shift;
+    my ($box, $stat) = @_;
+    my $storage = $stat->{storage};
 
     (sub {
 	my $objid = $_[0]->getAttribute ("object_id");
@@ -145,7 +171,8 @@ sub handle_update_object {
 }
 
 sub handle_delete_object {
-    my $box = shift;
+    my ($box, $stat) = @_;
+    my $storage = $stat->{storage};
 
     sub {
 	my $objid = $_[0]->getAttribute ("object_id");
@@ -159,7 +186,8 @@ sub handle_delete_object {
 }
 
 sub handle_new_object {
-    my $box = shift;
+    my ($box, $stat) = @_;
+    my $storage = $stat->{storage};
 
     (sub {
 	my $objid = $_[0]->getAttribute ("object_id");
@@ -178,7 +206,7 @@ sub handle_new_object {
 }
 
 sub read_updates {
-    my $doc = shift;
+    my ($doc, $stat) = @_;
 
     package XML::LibXML::LazyMatcher;
 
@@ -190,19 +218,19 @@ sub read_updates {
 	       C (sub {
 		   my $box = [];
 		   M (update_object =>
-		      synker::handle_update_object ($box),
+		      synker::handle_update_object ($box, $stat),
 		      sub {push @changes, $box->[0]; 1}
 		       )}->(),
 		  sub {
 		      my $box = [];
 		      M (new_object =>
-			 synker::handle_new_object ($box),
+			 synker::handle_new_object ($box, $stat),
 			 sub {push @changes, $box->[0]; 1}
 			  )}->(),
 		  sub {
 		      my $box = [];
 		      M (delete_object =>
-			 synker::handle_delete_object ($box),
+			 synker::handle_delete_object ($box, $stat),
 			 sub {push @changes, $box->[0]; 1}
 			  )}->(),
 		  synker::ignore_white_space
@@ -213,38 +241,58 @@ sub read_updates {
 }
 
 sub store_changes {
+    my ($key, $updates) = @_;
+
+    debug $key;
+
     # TODO: Factory
     use synker::Storage::File;
 
-    my $st = new synker::Storage::File file => "hoge.xml";
-    $st->store_changes (@_);
+    my $st = new synker::Storage::File file => "$key.xml";
+    $st->store_changes ($updates);
 }
 
 sub load_changes {
+    my ($key) = @_;
+
     # TODO: Factory
     use synker::Storage::File;
 
-    my $st = new synker::Storage::File file => "hoge.xml";
+    my ($history, $storage, $count) = ([], {}, 0);
+
+    my $st = new synker::Storage::File file => "$key.xml";
     $st->load_changes ($history, $storage, \$count);
+
+    debug join ", ", $key, $storage;
+
+    my $stat = synker::State->new (history => $history, storage => $storage,
+                                   count => $count);
+
+    return $stat;
 }
 
 post '/push' => sub {
     my $up = params->{update};
-    debug $up;
+    my $key = params->{key};
+    die "no key given" unless $key;
+    my $stat = get_state_obj ($key);
+
+    debug $stat;
 
     if ($up) {
 	my $doc = XML::LibXML->load_xml (string => $up);
-	my ($state_id, @changes) = eval {read_updates ($doc)};
+	my ($state_id, @changes) = eval {read_updates ($doc, $stat)};
 
-	die "$count  $#$history" if $count != $#$history + 1;
+	die "$stat->{count}  $#{$stat->{history}}"
+            if $stat->{count} != $#{$stat->{history}} + 1;
 
-	$state_id ||= $count ++;
+	$state_id ||= $stat->{count} ++;
 	my $updates = bless {state_id => $state_id,
 			     changes => \@changes} => "synker::Updates";
-	push @$history, $updates;
+	push @{$stat->{history}}, $updates;
 
-	store_changes ($updates);
-	apply_changes ($storage, \@changes);
+	store_changes ($key, $updates);
+	apply_changes ($stat->{storage}, \@changes);
 
 	package XML::LibXML::LazyBuilder;
 	&synker::output_dom (DOM (E response => {},
@@ -386,5 +434,5 @@ sub toLazyXMLElement {
 
 package synker;
 
-load_changes ();
+# load_changes ();
 true;
