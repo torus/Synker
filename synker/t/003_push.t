@@ -12,6 +12,7 @@ use Dancer::Test;
 my $ug = new Data::UUID;
 my $uuid = $ug->create ();
 my $objid1 = $ug->to_string ($uuid);
+my $key = $ug->to_string ($ug->create ());
 
 my $new_obj_xml = uri_escape (<<END_OF_XML);
 <updates>
@@ -22,7 +23,7 @@ my $new_obj_xml = uri_escape (<<END_OF_XML);
 </updates>
 END_OF_XML
 
-my $res = dancer_response POST => '/push', {body => "update=$new_obj_xml"};
+my $res = dancer_response POST => '/push', {body => "key=$key&update=$new_obj_xml"};
 is $res->{status}, 200, "push new object data";
 
 my $uuid2 = $ug->create ();
@@ -48,7 +49,7 @@ my $new_obj2_xml = uri_escape (<<END_OF_XML2);
 </updates>
 END_OF_XML2
 
-my $res2 = dancer_response POST => '/push', {body => "update=$new_obj2_xml"};
+my $res2 = dancer_response POST => '/push', {body => "key=$key&update=$new_obj2_xml"};
 is $res2->{status}, 200, "push new object refering previous object";
 
 
@@ -61,7 +62,7 @@ my $update_obj_xml = uri_escape (<<END_OF_XML3);
 </updates>
 END_OF_XML3
 
-my $res3 = dancer_response POST => '/push', {body => "update=$update_obj_xml"};
+my $res3 = dancer_response POST => '/push', {body => "key=$key&update=$update_obj_xml"};
 is $res3->{status}, 200, "update object property";
 
 my $delete_obj_xml = uri_escape (<<END_OF_XML4);
@@ -72,5 +73,5 @@ my $delete_obj_xml = uri_escape (<<END_OF_XML4);
 </updates>
 END_OF_XML4
 
-my $res4 = dancer_response POST => '/push', {body => "update=$delete_obj_xml"};
+my $res4 = dancer_response POST => '/push', {body => "key=$key&update=$delete_obj_xml"};
 is $res4->{status}, 200, "update object property";
