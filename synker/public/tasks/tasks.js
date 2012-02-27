@@ -1,6 +1,8 @@
 Tasks = function() {
 }
 
+var KEY = "hogetask"
+
 $(document).ready(function() {
     var body = $("body")
     body.css("background-color", "lightgray")
@@ -34,7 +36,7 @@ $(document).ready(function() {
         return false
     })
 
-    $.ajax({url: "/snapshot/",
+    $.ajax({url: "/snapshot/" + KEY,
             success: function(data, text_status, jqXHR) {
                 console.debug(data, text_status, jqXHR)
 
@@ -245,7 +247,7 @@ Tasks.prototype.send_ajax = function (xmlelem) {
     var elem = E_("x", {}, xmlelem)(document)
     var xml = elem.innerHTML
 
-    var data = "update=" + encodeURI(xml)
+    var data = "key=" + KEY + "&update=" + encodeURI(xml)
     $.ajax({url: "/push",
             type: "POST",
             data: data})
