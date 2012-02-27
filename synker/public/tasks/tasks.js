@@ -1,13 +1,16 @@
-Tasks = function() {
+Tasks = function(key) {
+    this.app_key = key
 }
 
-var KEY = "hogetask"
-
 $(document).ready(function() {
+    start ("hogetask")
+})
+
+function start (app_key) {
     var body = $("body")
     body.css("background-color", "lightgray")
 
-    var tasks = new Tasks
+    var tasks = new Tasks (app_key)
 
     body.append($("<div class='navbar'>").
                 append($("<div class='navbar-inner'>").
@@ -36,7 +39,7 @@ $(document).ready(function() {
         return false
     })
 
-    $.ajax({url: "/snapshot/" + KEY,
+    $.ajax({url: "/snapshot/" + app_key,
             success: function(data, text_status, jqXHR) {
                 console.debug(data, text_status, jqXHR)
 
@@ -45,7 +48,7 @@ $(document).ready(function() {
 
                 console.debug(tasks)
             }})
-})
+}
 
 Tasks.prototype.parse_object_list = function (obj_box, key_box) {
     var list = []
@@ -247,7 +250,7 @@ Tasks.prototype.send_ajax = function (xmlelem) {
     var elem = E_("x", {}, xmlelem)(document)
     var xml = elem.innerHTML
 
-    var data = "key=" + KEY + "&update=" + encodeURI(xml)
+    var data = "key=" + this.app_key + "&update=" + encodeURI(xml)
     $.ajax({url: "/push",
             type: "POST",
             data: data})
