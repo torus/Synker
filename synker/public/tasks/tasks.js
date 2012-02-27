@@ -250,7 +250,7 @@ Tasks.prototype.send_ajax = function (xmlelem) {
     var elem = E_("x", {}, xmlelem)(document)
     var xml = elem.innerHTML
 
-    var data = "key=" + this.app_key + "&update=" + encodeURI(xml)
+    var data = {"key": this.app_key, "update": xml}
     $.ajax({url: "/push",
             type: "POST",
             data: data})
