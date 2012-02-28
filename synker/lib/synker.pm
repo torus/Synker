@@ -13,9 +13,6 @@ use Dancer ':syntax';
 our $VERSION = '0.1';
 
 my $states = {};
-# my $storage = {};
-# my $count = 0;
-# my $history = [];
 
 sub get_state_obj {
     my ($key) = @_;
@@ -434,5 +431,4 @@ sub toLazyXMLElement {
 
 package synker;
 
-# load_changes ();
 true;
