@@ -50,6 +50,14 @@ function start (app_key) {
             }})
 }
 
+function box (container, content) {
+    container[0] = content
+}
+
+function unbox (container) {
+    return container[0]
+}
+
 Tasks.prototype.parse_object_list = function (obj_box, key_box) {
     var list = []
     with (xmlmatch) {
@@ -61,7 +69,7 @@ Tasks.prototype.parse_object_list = function (obj_box, key_box) {
                          return true
                      })),
                  function (e) {
-                     obj_box[0].set_property (key_box[0], list)
+                     unbox (obj_box).set_property (unbox (key_box), list)
                      return true
                  })
     }
@@ -74,7 +82,7 @@ Tasks.prototype.parse_property = function (obj_box) {
     with (xmlmatch) {
         return M("property",
                  function (e) {
-                     key_box[0] = e.getAttribute("key")
+                     box (key_box, e.getAttribute("key"))
                      return true
                  },
                  C((function () {
@@ -82,8 +90,8 @@ Tasks.prototype.parse_property = function (obj_box) {
                    M("#text",
                      function (e) {
                          var t = e.textContent
-                         var obj = obj_box[0]
-                         obj.set_property (key_box[0], t)
+                         var obj = unbox (obj_box)
+                         obj.set_property (unbox (key_box), t)
 
                          return true
                      })))
@@ -110,12 +118,12 @@ Tasks.prototype.match_object = function () {
                     var objid = e.getAttribute("object_id")
                     var obj = new TaskItem (objid)
 
-                    obj_box[0] = obj
+                    box (obj_box, obj)
                     return true
                 },
                 C(self.parse_property(obj_box)),
                 function () {
-                    var obj = obj_box[0]
+                    var obj = unbox (obj_box)
                     self.objects[obj.id] = obj
                     return true
                 }]
