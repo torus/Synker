@@ -61,7 +61,7 @@ Tasks.prototype.parse_object_list = function (obj_box, key_box) {
                          return true
                      })),
                  function (e) {
-                     obj_box[0].prop[key_box[0]] = list
+                     obj_box[0].set_property (key_box[0], list)
                      return true
                  })
     }
