@@ -233,7 +233,8 @@ Tasks.prototype.construct_task_list = function () {
         var item = this.draw_item(done_tasks[i])
 		item.append($("<p>").
                     append($("<small>").
-                           text(new Date(parseInt(done_tasks[i].prop.modified)).toString())))
+                           text(new Date(parseInt(done_tasks[i].
+                                                  get_property ("modified"))).toString())))
         done_container.append(item)
     }
 }
@@ -243,27 +244,28 @@ Tasks.prototype.get_tasks = function () {
     var pending_list = []
     var done_list = []
 
-    if (this.objects && this.objects.task_list.prop.tasks) {
-        var ids = this.objects.task_list.prop.tasks
+    if (this.objects && this.objects.task_list.get_property ("tasks")) {
+        var ids = this.objects.task_list.get_property ("tasks")
         for (var i = 0; i < ids.length; i ++) {
             var id = ids[i]
             var obj = this.objects[id]
-            if (obj.prop.state == "todo")
+            if (obj.get_property ("state") == "todo")
                 todo_list.push(obj)
-            else if (obj.prop.state == "pending")
+            else if (obj.get_property ("state") == "pending")
                 pending_list.push(obj)
-            else if (obj.prop.state == "done")
+            else if (obj.get_property ("state") == "done")
                 done_list.push(obj)
         }
 
-		done_list.sort (function (a, b) {
-			try {
-				return parseInt(b.prop.modified) - parseInt(a.prop.modified)
-			} catch (e) {
-				console.log("doesn't have modified date", a, b)
-				return 0
-			}
-		})
+	done_list.sort (function (a, b) {
+	    try {
+		return parseInt (b.get_property ("modified"))
+                    - parseInt (a.get_property ("modified"))
+	    } catch (e) {
+		console.log ("doesn't have modified date", a, b)
+		return 0
+	    }
+	})
     }
 
     return {todo: todo_list, pending: pending_list, done: done_list}
@@ -288,7 +290,7 @@ Tasks.prototype.send_message =  function (mesg) {
                           E_("property", {key: "modified"}, Date.now()))
     var add_to_list_elem
     if (this.objects.task_list) {
-        var task_list = this.objects.task_list.prop.tasks
+        var task_list = this.objects.task_list.get_property ("tasks")
         task_list.push(objid)
         console.debug("task added", task_list)
         add_to_list_elem = E_("update_object", {object_id: "task_list"},
