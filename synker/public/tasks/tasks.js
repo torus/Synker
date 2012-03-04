@@ -108,6 +108,10 @@ TaskItem.prototype.set_property = function (prop, value) {
     this.prop[prop] = value
 }
 
+TaskItem.prototype.get_property = function (prop) {
+    return this.prop[prop]
+}
+
 Tasks.prototype.match_object = function () {
     var obj_box = []
     var self = this
@@ -162,13 +166,13 @@ Tasks.prototype.update_task_state = function (task, state) {
 }
 
 Tasks.prototype.draw_item = function (task_obj) {
-    var o = task_obj.prop
     var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
         append($("<div>").
-               append($("<h3>").text(o.title)).
+               append($("<h3>").text(task_obj.get_property ("title"))).
                append($("<p>").
                       append($("<small>").
-                             text(new Date(parseInt(o.created)).toString()))))
+                             text(new Date(parseInt(task_obj.get_property ("created"))).
+                                  toString()))))
 
     return item
 }
