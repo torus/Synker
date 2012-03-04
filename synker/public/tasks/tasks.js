@@ -89,6 +89,15 @@ Tasks.prototype.parse_property = function (obj_box) {
     }
 }
 
+TaskItem = function () {        // TODO
+    this.prop = {}
+}
+
+TaskItem.prototype.set_id = function (n) {
+    this.id = n
+    console.debug ("id =>", n)
+}
+
 Tasks.prototype.match_object = function () {
     var obj_box = []
     var self = this
@@ -97,8 +106,9 @@ Tasks.prototype.match_object = function () {
         return ["object",
                 function (e) {
                     var objid = e.getAttribute("object_id")
-                    var obj = {prop: {}}
-                    obj.id = objid
+                    var obj = new TaskItem
+
+                    obj.set_id (objid)
                     obj_box[0] = obj
                     return true
                 },
