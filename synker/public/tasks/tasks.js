@@ -152,7 +152,7 @@ Tasks.prototype.match_snapshot_xml = function (data) {
 
 Tasks.prototype.update_task_state = function (task, state) {
     console.debug("clicked", state)
-    task.prop.state = state
+    task.set_property ("state", state)
     var e = E_("updates", {},
                E_("update_object", {object_id: task.id},
                   E_("property", {key: "state"}, state),
