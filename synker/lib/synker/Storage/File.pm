@@ -23,7 +23,8 @@ sub store_changes {
 }
 
 sub load_changes {
-    my ($self, $history, $storage, $count_ref) = @_;
+    my ($self, $stat) = @_;
+    my ($history, $storage, $count_ref) = ($stat->{history}, $stat->{storage}, \$stat->{count});
 
     use Dancer::FileUtils 'open_file';
     my $out = eval {open_file('<', $self->{file})};
@@ -31,15 +32,39 @@ sub load_changes {
     if (defined $out) {
 	local $/ = "\0";
 	while (my $xml = <$out>) {
+            chomp $xml;
 	    my $doc = XML::LibXML->load_xml (string => $xml);
-	    my ($state_id, @changes) = eval {synker::read_updates ($doc)};
+	    my ($state_id, @changes) = eval {synker::read_updates ($doc, $stat)};
+            if ($@) {
+                warn "$!: $@";
+            }
+
+            # open DEBUG, ">> debug.tmp" or die;
+            # print DEBUG "$doc, $xml\n";
+            # print DEBUG join (", ", @changes), "\n";
+            # print DEBUG join (", ", $state_id, $$count_ref);
+            # print DEBUG "\n=========\n";
+            # close DEBUG;
 
 	    $$count_ref = $state_id + 1;
 	    my $updates = bless {state_id => $state_id,
 				 changes => \@changes} => "synker::Updates";
 	    push @$history, $updates;
 
+            # open DEBUG, ">> debug.tmp" or die;
+            # print DEBUG "$history\n";
+            # print DEBUG "$updates\n";
+            # print DEBUG "\n=========2\n";
+            # close DEBUG;
+
+
 	    synker::apply_changes ($storage, \@changes);
+
+            # open DEBUG, ">> debug.tmp" or die;
+            # print DEBUG "@{[(%$storage)]}\n";
+            # print DEBUG "@changes\n";
+            # print DEBUG "\n=========3\n";
+            # close DEBUG;
 	}
     }
 }

@@ -156,7 +156,7 @@ sub handle_update_object {
 	my $objid = $_[0]->getAttribute ("object_id");
 	my $obj = $storage->{$objid};
 	if (!$obj) {
-	    die "object not found."
+	    die "object not found: objid = $objid"
 	}
 	my $pro = bless {} => "synker::Properties";
 	$box->[0] = bless {object_id => $objid,
@@ -257,13 +257,13 @@ sub load_changes {
 
     my ($history, $storage, $count) = ([], {}, 0);
 
-    my $st = new synker::Storage::File file => "$key.xml";
-    $st->load_changes ($history, $storage, \$count);
-
-    debug join ", ", $key, $storage;
-
     my $stat = synker::State->new (history => $history, storage => $storage,
                                    count => $count);
+
+    my $st = new synker::Storage::File file => "$key.xml";
+    $st->load_changes ($stat);
+
+    debug join ", ", $count, $key, $storage;
 
     return $stat;
 }
