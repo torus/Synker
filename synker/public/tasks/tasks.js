@@ -83,19 +83,21 @@ Tasks.prototype.parse_property = function (obj_box) {
                      function (e) {
                          var t = e.textContent
                          var obj = obj_box[0]
-                         obj.prop[key_box[0]] = t
+                         obj.set_property (key_box[0], t)
+
                          return true
                      })))
     }
 }
 
-TaskItem = function () {        // TODO
+TaskItem = function (id) {        // TODO
+    console.debug ("new obj", id)
+    this.id = id
     this.prop = {}
 }
 
-TaskItem.prototype.set_id = function (n) {
-    this.id = n
-    console.debug ("id =>", n)
+TaskItem.prototype.set_property = function (prop, value) {
+    this.prop[prop] = value
 }
 
 Tasks.prototype.match_object = function () {
@@ -106,9 +108,8 @@ Tasks.prototype.match_object = function () {
         return ["object",
                 function (e) {
                     var objid = e.getAttribute("object_id")
-                    var obj = new TaskItem
+                    var obj = new TaskItem (objid)
 
-                    obj.set_id (objid)
                     obj_box[0] = obj
                     return true
                 },
