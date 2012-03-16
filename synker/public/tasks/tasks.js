@@ -172,7 +172,7 @@ Tasks.prototype.update_task_state = function (task, state) {
 Tasks.prototype.draw_item = function (task_obj) {
     var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
         append($("<div>").
-               append($("<h3>").text(task_obj.get_property ("title"))).
+               append($("<p class='task-title'>").text(task_obj.get_property ("title"))).
                append($("<p>").
                       append($("<small>").
                              text(new Date(parseInt(task_obj.get_property ("created"))).
