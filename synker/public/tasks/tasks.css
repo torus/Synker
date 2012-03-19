@@ -1,0 +1,9 @@
+p.task-title:first-line {
+    line-height: 120%;
+    font-size: 130%;
+    font-weight: bold;
+}
+
+p.task-title {
+    font-size: 120%;
+}
