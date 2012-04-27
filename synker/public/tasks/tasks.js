@@ -7,8 +7,8 @@ $(document).ready(function() {
 })
 
 function start (app_key) {
-    var body = $("body")
-    body.css("background-color", "lightgray")
+    var body = $("#body-container")
+    $("body").css("background-color", "lightgray")
 
     var tasks = new Tasks (app_key)
 
@@ -18,14 +18,16 @@ function start (app_key) {
                               append($("<a class='brand'>").text("Tasks")))))
 
     var ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")
-    var form = $("<form class='well form-search'>").
+    var form = $("<form class='well form-inline'>").
         append(ta).
         append($("<button type='submit' class='btn'>").
                text("Add Task"))
 
     body.append($("<div class='row'>").
                 append($("<div class='span12'>").
-                       append(form)))
+                       append($("<fieldset>").
+                              append($("<div class='control-group'>").
+                                     append($("<div class='control'>").append(form))))))
 
     form.submit(function(ev) {
         var mesg = ta.val()
@@ -196,9 +198,9 @@ Tasks.prototype.construct_task_list = function () {
     var tasks = this.get_tasks()
     console.debug("Tasks", tasks)
 
-    var body = $("body")
+    var body = $("#body-container")
 
-    var todo_container = $("<div class='row'>")
+    var todo_container = $("<div class='row tasks-todo'>")
     var todo_tasks = tasks.todo
     body.append($("<h2>").text("TODO"))
     body.append(todo_container)
@@ -214,7 +216,7 @@ Tasks.prototype.construct_task_list = function () {
         this.bind_state_to_button(suspend, todo_tasks[i], "pending")
     }
 
-    var pending_container = $("<div class='row'>")
+    var pending_container = $("<div class='row tasks-pending'>")
     var pending_tasks = tasks.pending
     body.append($("<h2>").text("PENDING"))
     body.append(pending_container)
@@ -228,7 +230,7 @@ Tasks.prototype.construct_task_list = function () {
         this.bind_state_to_button(resume, pending_tasks[i], "todo")
     }
 
-    var done_container = $("<div class='row'>")
+    var done_container = $("<div class='row tasks-done'>")
     var done_tasks = tasks.done
     body.append($("<h2>").text("DONE"))
     body.append(done_container)
@@ -240,6 +242,18 @@ Tasks.prototype.construct_task_list = function () {
                            text(new Date(parseInt(done_tasks[i].
                                                   get_property ("modified"))).toString())))
         done_container.append(item)
+    }
+
+    this.containers = {todo: todo_container,
+                       pending: pending_container,
+                       done: done_container}
+}
+
+Tasks.prototype.get_container = function (label) {
+    if (this.containers == null) {
+        return null
+    } else {
+        return this.containers[label]
     }
 }
 
