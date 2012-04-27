@@ -17,17 +17,18 @@ function start (app_key) {
                        append($("<div class='container'>").
                               append($("<a class='brand'>").text("Tasks")))))
 
-    var ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")
+    var ta
     var form = $("<form class='well form-inline'>").
-        append(ta).
+        append(ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")).
         append($("<button type='submit' class='btn'>").
                text("Add Task"))
 
-    body.append($("<div class='row'>").
-                append($("<div class='span12'>").
-                       append($("<fieldset>").
-                              append($("<div class='control-group'>").
-                                     append($("<div class='control'>").append(form))))))
+    body.append(form)
+    // body.append($("<div class='row'>").
+    //             append($("<div class='span12'>").
+    //                    append($("<fieldset>").
+    //                           append($("<div class='control-group'>").
+    //                                  append($("<div class='controls'>").append(form))))))
 
     form.submit(function(ev) {
         var mesg = ta.val()
@@ -43,12 +44,12 @@ function start (app_key) {
 
     $.ajax({url: "/snapshot/" + app_key,
             success: function(data, text_status, jqXHR) {
-                console.debug(data, text_status, jqXHR)
+                // console.debug(data, text_status, jqXHR)
 
                 tasks.match_snapshot_xml(data)
                 tasks.construct_task_list()
 
-                console.debug(tasks)
+                // console.debug(tasks)
             }})
 }
 
@@ -156,7 +157,7 @@ Tasks.prototype.match_snapshot_xml = function (data) {
               C((function () {
                   return M.apply(this, self.match_object())})()))
         var res = mat(data.firstChild)
-        console.debug("res", res)
+        // console.debug("res", res)
     }
 }
 
@@ -196,7 +197,7 @@ Tasks.prototype.construct_task_list = function () {
     var self = this
 
     var tasks = this.get_tasks()
-    console.debug("Tasks", tasks)
+    // console.debug("Tasks", tasks)
 
     var body = $("#body-container")
 
@@ -310,7 +311,7 @@ Tasks.prototype.send_message =  function (mesg) {
     if (this.objects.task_list) {
         var task_list = this.objects.task_list.get_property ("tasks")
         task_list.push(objid)
-        console.debug("task added", task_list)
+        // console.debug("task added", task_list)
         add_to_list_elem = E_("update_object", {object_id: "task_list"},
                               E_("property", {key: "tasks"},
                                  E_("object_list", {},
