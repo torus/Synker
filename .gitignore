@@ -3,9 +3,7 @@ synker/Makefile
 synker/Makefile.old
 blib
 synker/pm_to_blib
-
 synker/hoge.xml
-
 synker/MANIFEST.bak
-
 synker/hogetask.xml
+MYMETA.*
