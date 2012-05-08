@@ -234,7 +234,7 @@ Tasks.prototype.construct_task_list = function () {
 
     for (var i = 0; i < done_tasks.length; i ++) {
         var item = this.create_item_element(done_tasks[i])
-                item.append($("<p>").
+        item.append($("<p>").
                     append($("<small>").
                            text(new Date(parseInt(done_tasks[i].
                                                   get_property ("modified"))).toString())))
