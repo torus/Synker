@@ -18,17 +18,12 @@ function start (app_key) {
                               append($("<a class='brand'>").text("Tasks")))))
 
     var ta
-    var form = $("<form class='well form-inline'>").
-        append(ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")).
-        append($("<button type='submit' class='btn'>").
-               text("Add Task"))
+    var form
 
-    body.append(form)
-    // body.append($("<div class='row'>").
-    //             append($("<div class='span12'>").
-    //                    append($("<fieldset>").
-    //                           append($("<div class='control-group'>").
-    //                                  append($("<div class='controls'>").append(form))))))
+    body.append(form = $("<form class='well form-inline'>").
+                append(ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")).
+                append($("<button type='submit' class='btn'>").
+                       text("Add Task")))
 
     form.submit(function(ev) {
         var mesg = ta.val()
@@ -172,8 +167,9 @@ Tasks.prototype.update_task_state = function (task, state) {
     this.send_ajax(e)
 }
 
-Tasks.prototype.draw_item = function (task_obj) {
+Tasks.prototype.create_item_element = function (task_obj) {
     var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
+        attr("id", "task-" + task_obj.id).
         append($("<div>").
                append($("<p class='task-title'>").text(task_obj.get_property ("title"))).
                append($("<p>").
@@ -202,47 +198,42 @@ Tasks.prototype.construct_task_list = function () {
     var body = $("#body-container")
 
     var todo_container = $("<div class='row tasks-todo'>")
-    var todo_tasks = tasks.todo
+
     body.append($("<h2>").text("TODO"))
     body.append(todo_container)
 
-    for (var i = 0; i < todo_tasks.length; i ++) {
-        var done = $("<a class='btn btn-success' href='#'>").text("Done")
-        var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
-        var item = this.draw_item(todo_tasks[i]).
-            append($("<div style='padding-left:3ex'>").append(done).append(suspend))
-        todo_container.append(item)
-
-        this.bind_state_to_button(done, todo_tasks[i], "done")
-        this.bind_state_to_button(suspend, todo_tasks[i], "pending")
-    }
-
     var pending_container = $("<div class='row tasks-pending'>")
-    var pending_tasks = tasks.pending
+
     body.append($("<h2>").text("PENDING"))
     body.append(pending_container)
 
-    for (var i = 0; i < pending_tasks.length; i ++) {
-        var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
-        var item = this.draw_item(pending_tasks[i]).
-            append($("<div style='padding-left:3ex'>").append(resume))
-        pending_container.append(item)
-
-        this.bind_state_to_button(resume, pending_tasks[i], "todo")
-    }
-
     var done_container = $("<div class='row tasks-done'>")
-    var done_tasks = tasks.done
+
     body.append($("<h2>").text("DONE"))
     body.append(done_container)
 
-    for (var i = 0; i < done_tasks.length; i ++) {
-        var item = this.draw_item(done_tasks[i])
-		item.append($("<p>").
-                    append($("<small>").
-                           text(new Date(parseInt(done_tasks[i].
-                                                  get_property ("modified"))).toString())))
-        done_container.append(item)
+    for (var i = 0; i < tasks.length; i ++) {
+        var item = this.create_item_element(tasks[i])
+        var stat = tasks[i].get_property ("state")
+
+        if (stat == "todo") {
+            var done = $("<a class='btn btn-success' href='#'>").text("Done")
+            var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
+            item.append($("<div style='padding-left:3ex'>").append(done).append(suspend))
+
+            this.bind_state_to_button(done, tasks[i], "done")
+            this.bind_state_to_button(suspend, tasks[i], "pending")
+
+            todo_container.append(item)
+        } else if (stat == "pending") {
+            var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
+            item.append($("<div style='padding-left:3ex'>").append(resume))
+            this.bind_state_to_button(resume, tasks[i], "todo")
+
+            pending_container.append(item)
+        } else if (stat == "done") {
+            done_container.append(item)
+        }
     }
 
     this.containers = {todo: todo_container,
@@ -259,35 +250,29 @@ Tasks.prototype.get_container = function (label) {
 }
 
 Tasks.prototype.get_tasks = function () {
-    var todo_list = []
-    var pending_list = []
-    var done_list = []
+    var dest = []
 
     if (this.objects && this.objects.task_list.get_property ("tasks")) {
         var ids = this.objects.task_list.get_property ("tasks")
         for (var i = 0; i < ids.length; i ++) {
             var id = ids[i]
             var obj = this.objects[id]
-            if (obj.get_property ("state") == "todo")
-                todo_list.push(obj)
-            else if (obj.get_property ("state") == "pending")
-                pending_list.push(obj)
-            else if (obj.get_property ("state") == "done")
-                done_list.push(obj)
+
+            dest.push(obj)
         }
 
-	done_list.sort (function (a, b) {
-	    try {
-		return parseInt (b.get_property ("modified"))
+        dest.sort (function (a, b) {
+            try {
+                return parseInt (b.get_property ("modified"))
                     - parseInt (a.get_property ("modified"))
-	    } catch (e) {
-		console.log ("doesn't have modified date", a, b)
-		return 0
-	    }
-	})
+            } catch (e) {
+                console.log ("doesn't have modified date", a, b)
+                return 0
+            }
+        })
     }
 
-    return {todo: todo_list, pending: pending_list, done: done_list}
+    return dest
 }
 
 Tasks.prototype.send_ajax = function (xmlelem) {
@@ -344,3 +329,8 @@ Tasks.prototype.send_message =  function (mesg) {
 
     this.send_ajax(e)
 }
+
+// Local Variables:
+// indent-tabs-mode: nil
+// tab-width: 8
+// End:
