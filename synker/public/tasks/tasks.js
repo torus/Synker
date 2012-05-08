@@ -18,12 +18,12 @@ function start (app_key) {
                               append($("<a class='brand'>").text("Tasks")))))
 
     var ta
-    var form = $("<form class='well form-inline'>").
-        append(ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")).
-        append($("<button type='submit' class='btn'>").
-               text("Add Task"))
+    var form
 
-    body.append(form)
+    body.append(form = $("<form class='well form-inline'>").
+                append(ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")).
+                append($("<button type='submit' class='btn'>").
+                       text("Add Task")))
 
     form.submit(function(ev) {
         var mesg = ta.val()
