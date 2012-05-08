@@ -234,7 +234,7 @@ Tasks.prototype.construct_task_list = function () {
 
     for (var i = 0; i < done_tasks.length; i ++) {
         var item = this.create_item_element(done_tasks[i])
-		item.append($("<p>").
+                item.append($("<p>").
                     append($("<small>").
                            text(new Date(parseInt(done_tasks[i].
                                                   get_property ("modified"))).toString())))
@@ -272,15 +272,15 @@ Tasks.prototype.get_tasks = function () {
                 done_list.push(obj)
         }
 
-	done_list.sort (function (a, b) {
-	    try {
-		return parseInt (b.get_property ("modified"))
+        done_list.sort (function (a, b) {
+            try {
+                return parseInt (b.get_property ("modified"))
                     - parseInt (a.get_property ("modified"))
-	    } catch (e) {
-		console.log ("doesn't have modified date", a, b)
-		return 0
-	    }
-	})
+            } catch (e) {
+                console.log ("doesn't have modified date", a, b)
+                return 0
+            }
+        })
     }
 
     return {todo: todo_list, pending: pending_list, done: done_list}
