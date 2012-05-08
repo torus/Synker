@@ -340,3 +340,8 @@ Tasks.prototype.send_message =  function (mesg) {
 
     this.send_ajax(e)
 }
+
+// Local Variables:
+// indent-tabs-mode: nil
+// tab-width: 8
+// End:
