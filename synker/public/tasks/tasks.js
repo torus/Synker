@@ -167,7 +167,7 @@ Tasks.prototype.update_task_state = function (task, state) {
     this.send_ajax(e)
 }
 
-Tasks.prototype.draw_item = function (task_obj) {
+Tasks.prototype.create_item_element = function (task_obj) {
     var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
         attr("id", "task-" + task_obj.id).
         append($("<div>").
@@ -205,7 +205,7 @@ Tasks.prototype.construct_task_list = function () {
     for (var i = 0; i < todo_tasks.length; i ++) {
         var done = $("<a class='btn btn-success' href='#'>").text("Done")
         var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
-        var item = this.draw_item(todo_tasks[i]).
+        var item = this.create_item_element(todo_tasks[i]).
             append($("<div style='padding-left:3ex'>").append(done).append(suspend))
         todo_container.append(item)
 
@@ -220,7 +220,7 @@ Tasks.prototype.construct_task_list = function () {
 
     for (var i = 0; i < pending_tasks.length; i ++) {
         var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
-        var item = this.draw_item(pending_tasks[i]).
+        var item = this.create_item_element(pending_tasks[i]).
             append($("<div style='padding-left:3ex'>").append(resume))
         pending_container.append(item)
 
@@ -233,7 +233,7 @@ Tasks.prototype.construct_task_list = function () {
     body.append(done_container)
 
     for (var i = 0; i < done_tasks.length; i ++) {
-        var item = this.draw_item(done_tasks[i])
+        var item = this.create_item_element(done_tasks[i])
 		item.append($("<p>").
                     append($("<small>").
                            text(new Date(parseInt(done_tasks[i].
