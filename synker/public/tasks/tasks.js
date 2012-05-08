@@ -24,11 +24,6 @@ function start (app_key) {
                text("Add Task"))
 
     body.append(form)
-    // body.append($("<div class='row'>").
-    //             append($("<div class='span12'>").
-    //                    append($("<fieldset>").
-    //                           append($("<div class='control-group'>").
-    //                                  append($("<div class='controls'>").append(form))))))
 
     form.submit(function(ev) {
         var mesg = ta.val()
