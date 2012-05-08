@@ -198,57 +198,23 @@ Tasks.prototype.construct_task_list = function () {
     var body = $("#body-container")
 
     var todo_container = $("<div class='row tasks-todo'>")
-    // var todo_tasks = tasks.todo
+
     body.append($("<h2>").text("TODO"))
     body.append(todo_container)
 
-    // for (var i = 0; i < todo_tasks.length; i ++) {
-    //     var done = $("<a class='btn btn-success' href='#'>").text("Done")
-    //     var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
-    //     var item = this.create_item_element(todo_tasks[i]).
-    //         append($("<div style='padding-left:3ex'>").append(done).append(suspend))
-    //     todo_container.append(item)
-
-    //     this.bind_state_to_button(done, todo_tasks[i], "done")
-    //     this.bind_state_to_button(suspend, todo_tasks[i], "pending")
-    // }
-
     var pending_container = $("<div class='row tasks-pending'>")
-    // var pending_tasks = tasks.pending
+
     body.append($("<h2>").text("PENDING"))
     body.append(pending_container)
 
-    // for (var i = 0; i < pending_tasks.length; i ++) {
-    //     var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
-    //     var item = this.create_item_element(pending_tasks[i]).
-    //         append($("<div style='padding-left:3ex'>").append(resume))
-    //     pending_container.append(item)
-
-    //     this.bind_state_to_button(resume, pending_tasks[i], "todo")
-    // }
-
     var done_container = $("<div class='row tasks-done'>")
-    // var done_tasks = tasks.done
+
     body.append($("<h2>").text("DONE"))
     body.append(done_container)
-
-    // for (var i = 0; i < done_tasks.length; i ++) {
-    //     var item = this.create_item_element(done_tasks[i])
-    //     item.append($("<p>").
-    //                 append($("<small>").
-    //                        text(new Date(parseInt(done_tasks[i].
-    //                                               get_property ("modified"))).toString())))
-    //     done_container.append(item)
-    // }
 
     for (var i = 0; i < tasks.length; i ++) {
         var item = this.create_item_element(tasks[i])
         var stat = tasks[i].get_property ("state")
-
-        // item.append($("<p>").
-        //             append($("<small>").
-        //                    text(new Date(parseInt(done_tasks[i].
-        //                                           get_property ("modified"))).toString())))
 
         if (stat == "todo") {
             var done = $("<a class='btn btn-success' href='#'>").text("Done")
@@ -284,10 +250,6 @@ Tasks.prototype.get_container = function (label) {
 }
 
 Tasks.prototype.get_tasks = function () {
-    // var todo_list = []
-    // var pending_list = []
-    // var done_list = []
-
     var dest = []
 
     if (this.objects && this.objects.task_list.get_property ("tasks")) {
@@ -295,13 +257,6 @@ Tasks.prototype.get_tasks = function () {
         for (var i = 0; i < ids.length; i ++) {
             var id = ids[i]
             var obj = this.objects[id]
-
-            // if (obj.get_property ("state") == "todo")
-            //     todo_list.push(obj)
-            // else if (obj.get_property ("state") == "pending")
-            //     pending_list.push(obj)
-            // else if (obj.get_property ("state") == "done")
-            //     done_list.push(obj)
 
             dest.push(obj)
         }
@@ -318,7 +273,6 @@ Tasks.prototype.get_tasks = function () {
     }
 
     return dest
-    // return {todo: todo_list, pending: pending_list, done: done_list}
 }
 
 Tasks.prototype.send_ajax = function (xmlelem) {
