@@ -4,6 +4,21 @@ Tasks = function(key) {
 
 $(document).ready(function() {
     start ("hogetask")
+
+    // Enable pusher logging - don't include this in production
+    Pusher.log = function(message) {
+      if (window.console && window.console.log) window.console.log(message);
+    };
+
+    // Flash fallback logging - don't include this in production
+    WEB_SOCKET_DEBUG = true;
+
+    var pusher = new Pusher('006215e5138bd3a75e84');
+    var channel = pusher.subscribe('test_channel');
+    channel.bind('my_event', function(data) {
+      alert(data);
+    });
+
 })
 
 function start (app_key) {
