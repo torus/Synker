@@ -167,6 +167,16 @@ Tasks.prototype.update_task_state = function (task, state) {
     this.send_ajax(e)
 }
 
+function date_string(date) {
+    var y = date.getFullYear()
+    var m = date.getMonth() + 1
+    var d = date.getDate()
+    var h = date.getHours()
+    var min = date.getMinutes()
+
+    return [m, d, y].join("/") + " " + [h, min].join(":")
+}
+
 Tasks.prototype.create_item_element = function (task_obj) {
     var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
         attr("id", "task-" + task_obj.id).
@@ -174,8 +184,7 @@ Tasks.prototype.create_item_element = function (task_obj) {
                append($("<p class='task-title'>").text(task_obj.get_property ("title"))).
                append($("<p>").
                       append($("<small>").
-                             text(new Date(parseInt(task_obj.get_property ("created"))).
-                                  toString()))))
+                             text(date_string(new Date(parseInt(task_obj.get_property ("created"))))))))
 
     return item
 }
