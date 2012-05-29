@@ -193,13 +193,12 @@ function date_string(date) {
 }
 
 Tasks.prototype.create_item_element = function (task_obj) {
-    var item = $("<div class='span3' style='background-color:white;margin-top:1ex'>").
+    var item = $("<div class='span3'>").
         attr("id", "task-" + task_obj.id).
-        append($("<div>").
+        append($("<div class='task-item'>").
                append($("<p class='task-title'>").text(task_obj.get_property ("title"))).
-               append($("<p>").
-                      append($("<small>").
-                             text(date_string(new Date(parseInt(task_obj.get_property ("created"))))))))
+               append($("<p class='task-timestamp'>").
+                      text(date_string(new Date(parseInt(task_obj.get_property ("created")))))))
 
     return item
 }
@@ -243,7 +242,9 @@ Tasks.prototype.construct_task_list = function () {
         if (stat == "todo") {
             var done = $("<a class='btn btn-success' href='#'>").text("Done")
             var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
-            item.append($("<div style='padding-left:3ex'>").append(done).append(suspend))
+            item.children().last().
+                append($("<div style='padding-left:3ex'>").
+                       append(done).append(suspend))
 
             this.bind_state_to_button(done, tasks[i], "done")
             this.bind_state_to_button(suspend, tasks[i], "pending")
@@ -251,7 +252,8 @@ Tasks.prototype.construct_task_list = function () {
             todo_container.append(item)
         } else if (stat == "pending") {
             var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
-            item.append($("<div style='padding-left:3ex'>").append(resume))
+            item.children().last().
+                append($("<div style='padding-left:3ex'>").append(resume))
             this.bind_state_to_button(resume, tasks[i], "todo")
 
             pending_container.append(item)

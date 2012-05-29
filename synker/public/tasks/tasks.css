@@ -7,3 +7,16 @@ p.task-title:first-line {
 p.task-title {
     font-size: 120%;
 }
+
+p.task-timestamp {
+    font-size: small;
+    color: gray;
+}
+
+div.task-item {
+    border-radius: 10px;
+    box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2);
+    background-color:white;
+    margin-top:1ex;
+    padding: 5px;
+}
