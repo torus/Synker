@@ -17,8 +17,7 @@ div.task-item {
     border-radius: 10px;
     box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2);
     background-color:white;
-    margin-top:1ex;
-    padding: 5px;
+    padding: 5px 5px 0px 5px;
     width: 210px;
     margin: 5px 0px 0px 20px;
     float: left;
