@@ -37,6 +37,7 @@ function start (app_key) {
 
     body.append(form = $("<form class='well form-inline'>").
                 append(ta = $("<input type='text' class='input-xxlarge' placeholder='To do'>")).
+                append(" ").
                 append($("<button type='submit' class='btn'>").
                        text("Add Task")))
 
@@ -242,8 +243,8 @@ Tasks.prototype.construct_task_list = function () {
             var done = $("<a class='btn btn-success' href='#'>").text("Done")
             var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
             item.children().last().
-                append($("<div style='padding-left:3ex'>").
-                       append(done).append(suspend))
+                append($("<div style='text-align:right;padding-right:5px'>").
+                       append(done).append(" ").append(suspend))
 
             this.bind_state_to_button(done, tasks[i], "done")
             this.bind_state_to_button(suspend, tasks[i], "pending")
@@ -252,7 +253,7 @@ Tasks.prototype.construct_task_list = function () {
         } else if (stat == "pending") {
             var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
             item.children().last().
-                append($("<div style='padding-left:3ex'>").append(resume))
+                append($("<div style='text-align:right;padding-right:5px'>").append(resume))
             this.bind_state_to_button(resume, tasks[i], "todo")
 
             pending_container.append(item)
