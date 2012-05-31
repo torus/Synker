@@ -193,12 +193,11 @@ function date_string(date) {
 }
 
 Tasks.prototype.create_item_element = function (task_obj) {
-    var item = $("<div class='span3'>").
+    var item = $("<div class='task-item'>").
         attr("id", "task-" + task_obj.id).
-        append($("<div class='task-item'>").
-               append($("<p class='task-title'>").text(task_obj.get_property ("title"))).
-               append($("<p class='task-timestamp'>").
-                      text(date_string(new Date(parseInt(task_obj.get_property ("created")))))))
+        append($("<p class='task-title'>").text(task_obj.get_property ("title"))).
+        append($("<p class='task-timestamp'>").
+               text(date_string(new Date(parseInt(task_obj.get_property ("created"))))))
 
     return item
 }
@@ -261,6 +260,10 @@ Tasks.prototype.construct_task_list = function () {
             done_container.append(item)
         }
     }
+
+    todo_container.masonry({itemSelector: ".task-item"})
+    pending_container.masonry({itemSelector: ".task-item"})
+    done_container.masonry({itemSelector: ".task-item"})
 
     this.containers = {todo: todo_container,
                        pending: pending_container,
