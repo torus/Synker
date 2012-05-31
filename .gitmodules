@@ -1,0 +1,3 @@
+[submodule "synker/public/tasks/masonry"]
+	path = synker/public/tasks/masonry
+	url = https://github.com/desandro/masonry.git
