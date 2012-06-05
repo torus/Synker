@@ -11,10 +11,13 @@ function xmlmatch_test_main () {
 
         var eat_root =
             M ("root",
-               C (M ("c1", function (c) {console.assert (c.textContent == "cont c1"); return true}),
+               C (M ("c1", function (c) {
+                   console.assert (c.textContent == "cont c1"); return true}),
                   M ("c2"),
-                  M ("c3", concat (M ("c31", function (c) {console.debug (c); return true;}),
-                                   M ("c32", function (c) {console.debug (c); return true;})))));
+                  M ("c3", concat (M ("c31", function (c) {console.debug (c);
+                                                           return true;}),
+                                   M ("c32", function (c) {console.debug (c);
+                                                           return true;})))));
 
         var ret = eat_root (elem);
 
@@ -43,7 +46,8 @@ xmlmatch.concat = function () {
     var seq = arguments;
 
     return function (elem) {
-        for (var c = elem.firstChild, i = 0; i < seq.length; c = c.nextSibling, i ++) {
+        for (var c = elem.firstChild, i = 0; i < seq.length;
+             c = c.nextSibling, i ++) {
             if (! seq[i] (c))
                 return false;
         }
