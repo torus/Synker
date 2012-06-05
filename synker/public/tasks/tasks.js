@@ -236,10 +236,10 @@ Tasks.prototype.construct_task_list = function () {
     body.append(done_container)
 
     for (var i = 0; i < tasks.length; i ++) {
-        var item = this.create_item_element(tasks[i])
         var stat = tasks[i].get_property ("state")
-
         if (stat == "todo") {
+            var item = this.create_item_element(tasks[i])
+
             var done = $("<a class='btn btn-success' href='#'>").text("Done")
             var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
             item.children().last().
@@ -251,6 +251,8 @@ Tasks.prototype.construct_task_list = function () {
 
             todo_container.append(item)
         } else if (stat == "pending") {
+            var item = this.create_item_element(tasks[i])
+
             var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
             item.children().last().
                 append($("<div style='text-align:right;padding-right:5px'>").append(resume))
@@ -258,6 +260,8 @@ Tasks.prototype.construct_task_list = function () {
 
             pending_container.append(item)
         } else if (stat == "done") {
+            var item = this.create_item_element(tasks[i])
+
             done_container.append(item)
         }
     }
