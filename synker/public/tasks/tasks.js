@@ -113,7 +113,7 @@ Tasks.prototype.parse_property = function (obj_box) {
 }
 
 TaskItem = function (id) {
-    console.debug ("new obj", id)
+    // console.debug ("new obj", id)
     this.id = id
     this.prop = {}
 }
