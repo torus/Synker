@@ -212,6 +212,21 @@ Tasks.prototype.bind_state_to_button = function (btn, task_obj, state) {
     })
 }
 
+Tasks.prototype.generate_todo_element = function (task) {
+    var item = this.create_item_element(task)
+
+    var done = $("<a class='btn btn-success' href='#'>").text("Done")
+    var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
+    item.children().last().
+        append($("<div style='text-align:right;padding-right:5px'>").
+               append(done).append(" ").append(suspend))
+
+    this.bind_state_to_button(done, task, "done")
+    this.bind_state_to_button(suspend, task, "pending")
+
+    return item
+}
+
 Tasks.prototype.construct_task_list = function () {
     var self = this
 
@@ -238,16 +253,17 @@ Tasks.prototype.construct_task_list = function () {
     for (var i = 0; i < tasks.length; i ++) {
         var stat = tasks[i].get_property ("state")
         if (stat == "todo") {
-            var item = this.create_item_element(tasks[i])
+            // var item = this.create_item_element(tasks[i])
 
-            var done = $("<a class='btn btn-success' href='#'>").text("Done")
-            var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
-            item.children().last().
-                append($("<div style='text-align:right;padding-right:5px'>").
-                       append(done).append(" ").append(suspend))
+            // var done = $("<a class='btn btn-success' href='#'>").text("Done")
+            // var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
+            // item.children().last().
+            //     append($("<div style='text-align:right;padding-right:5px'>").
+            //            append(done).append(" ").append(suspend))
 
-            this.bind_state_to_button(done, tasks[i], "done")
-            this.bind_state_to_button(suspend, tasks[i], "pending")
+            // this.bind_state_to_button(done, tasks[i], "done")
+            // this.bind_state_to_button(suspend, tasks[i], "pending")
+            var item = this.generate_todo_element(tasks[i])
 
             todo_container.append(item)
         } else if (stat == "pending") {
