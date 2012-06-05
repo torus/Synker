@@ -376,6 +376,33 @@ Tasks.prototype.send_message =  function (mesg) {
                add_to_list_elem
               )
 
+    // locally
+    with (xmlmatch) {
+        var obj_box = []
+        var self = this
+
+        var mat = M("new_object",
+                    function (e) {
+                        var objid = e.getAttribute("object_id")
+                        var obj = new TaskItem (objid)
+
+                        box (obj_box, obj)
+                        return true
+                    },
+                    C(self.parse_property(obj_box)),
+                    function () {
+                        var obj = unbox (obj_box)
+                        self.objects[obj.id] = obj
+                        return true
+                    })
+
+        mat(new_obj_elem(document))
+        console.debug(objid, this.objects[objid])
+
+        var item = this.generate_todo_element(this.objects[objid])
+        this.containers.todo.append(item).masonry('appended', item)
+    }
+
     this.send_ajax(e)
 }
 
