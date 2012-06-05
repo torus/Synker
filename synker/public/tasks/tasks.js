@@ -227,6 +227,23 @@ Tasks.prototype.generate_todo_element = function (task) {
     return item
 }
 
+Tasks.prototype.generate_pending_element = function (task) {
+    var item = this.create_item_element(task)
+
+    var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
+    item.children().last().
+        append($("<div style='text-align:right;padding-right:5px'>").append(resume))
+    this.bind_state_to_button(resume, task, "todo")
+
+    return item
+}
+
+Tasks.prototype.generate_done_element = function (task) {
+    var item = this.create_item_element(task)
+
+    return item
+}
+
 Tasks.prototype.construct_task_list = function () {
     var self = this
 
@@ -256,17 +273,17 @@ Tasks.prototype.construct_task_list = function () {
             var item = this.generate_todo_element(tasks[i])
             todo_container.append(item)
         } else if (stat == "pending") {
-            var item = this.create_item_element(tasks[i])
+            // var item = this.create_item_element(tasks[i])
 
-            var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
-            item.children().last().
-                append($("<div style='text-align:right;padding-right:5px'>").append(resume))
-            this.bind_state_to_button(resume, tasks[i], "todo")
-
+            // var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
+            // item.children().last().
+            //     append($("<div style='text-align:right;padding-right:5px'>").append(resume))
+            // this.bind_state_to_button(resume, tasks[i], "todo")
+            var item = this.generate_pending_element(tasks[i])
             pending_container.append(item)
         } else if (stat == "done") {
-            var item = this.create_item_element(tasks[i])
-
+            // var item = this.create_item_element(tasks[i])
+            var item = this.generate_done_element(tasks[i])
             done_container.append(item)
         }
     }
