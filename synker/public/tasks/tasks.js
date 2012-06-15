@@ -194,7 +194,7 @@ function date_string(date) {
 }
 
 Tasks.prototype.create_item_element = function (task_obj) {
-    var item = $("<div class='task-item'>").
+    var item = $("<div class='task-item-container'>").
         attr("id", "task-" + task_obj.id).
         append($("<p class='task-title'>").text(task_obj.get_property ("title"))).
         append($("<p class='task-timestamp'>").
@@ -213,11 +213,13 @@ Tasks.prototype.bind_state_to_button = function (btn, task_obj, state) {
 }
 
 Tasks.prototype.generate_todo_element = function (task) {
-    var item = this.create_item_element(task)
+    var content = this.create_item_element(task)
 
     var done = $("<a class='btn btn-success' href='#'>").text("Done")
     var suspend = $("<a class='btn btn-warning' href='#'>").text("Suspend")
-    item.children().last().
+
+    var item = $("<div class='task-item'>").
+        append(content).
         append($("<div style='text-align:right;padding-right:5px'>").
                append(done).append(" ").append(suspend))
 
@@ -228,10 +230,12 @@ Tasks.prototype.generate_todo_element = function (task) {
 }
 
 Tasks.prototype.generate_pending_element = function (task) {
-    var item = this.create_item_element(task)
+    var content = this.create_item_element(task)
 
     var resume = $("<a class='btn btn-primary' href='#'>").text("Resume")
-    item.children().last().
+
+    var item = $("<div class='task-item'>").
+        append(content).
         append($("<div style='text-align:right;padding-right:5px'>").append(resume))
     this.bind_state_to_button(resume, task, "todo")
 
@@ -239,7 +243,10 @@ Tasks.prototype.generate_pending_element = function (task) {
 }
 
 Tasks.prototype.generate_done_element = function (task) {
-    var item = this.create_item_element(task)
+    var content = this.create_item_element(task)
+
+    var item = $("<div class='task-item'>").
+        append(content)
 
     return item
 }

@@ -11,13 +11,14 @@ p.task-title {
 p.task-timestamp {
     font-size: small;
     color: gray;
+    margin-bottom: 2px;
 }
 
 div.task-item {
     border-radius: 10px;
     box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2);
     background-color:white;
-    padding: 5px 5px 0px 5px;
+    padding: 5px 5px 7px 5px;
     width: 210px;
     margin: 5px 0px 0px 20px;
     float: left;
