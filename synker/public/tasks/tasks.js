@@ -203,11 +203,12 @@ Tasks.prototype.create_item_element = function (task_obj) {
     return item
 }
 
-Tasks.prototype.bind_state_to_button = function (btn, task_obj, state) {
+Tasks.prototype.bind_state_to_button = function (btn, task_obj, state, item_elem) {
     var self = this
 
     btn.click(function (ev) {
         self.update_task_state(task_obj, state)
+        item_elem.hide("fast")
         return false
     })
 }
@@ -223,8 +224,8 @@ Tasks.prototype.generate_todo_element = function (task) {
         append($("<div style='text-align:right;padding-right:5px'>").
                append(done).append(" ").append(suspend))
 
-    this.bind_state_to_button(done, task, "done")
-    this.bind_state_to_button(suspend, task, "pending")
+    this.bind_state_to_button(done, task, "done", item)
+    this.bind_state_to_button(suspend, task, "pending", item)
 
     return item
 }
@@ -237,7 +238,7 @@ Tasks.prototype.generate_pending_element = function (task) {
     var item = $("<div class='task-item'>").
         append(content).
         append($("<div style='text-align:right;padding-right:5px'>").append(resume))
-    this.bind_state_to_button(resume, task, "todo")
+    this.bind_state_to_button(resume, task, "todo", item)
 
     return item
 }
